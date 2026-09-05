@@ -44,7 +44,7 @@ async function getActiveModel() {
   return "llama-3.3-70b-versatile";
 }
 
-export async function generateAICommentary(pliesList, currentPly) {
+export async function generateAICommentary(pliesList, currentPly, startFen) {
   if (!currentPly || !currentPly.from || !currentPly.to) return "";
 
   const mover = currentPly.pieceColor === "w" ? "White" : "Black";
@@ -54,8 +54,17 @@ export async function generateAICommentary(pliesList, currentPly) {
     return `${mover} plays ${currentPly.from}-${currentPly.to}.`;
   }
 
-  // 1. Rebuild board state for FEN and SAN move notation
-  const game = new Chess();
+  // 1. Rebuild board state for FEN and SAN move notation, starting from the
+  //    *actual* game's starting position (custom setups included), not
+  //    always the standard array.
+  let game;
+  try {
+    game = startFen ? new Chess(startFen) : new Chess();
+  } catch (err) {
+    console.warn("Commentary: invalid startFen, falling back to standard start:", err);
+    game = new Chess();
+  }
+
   let lastSan = "";
   for (let i = 0; i < pliesList.length; i++) {
     try {
@@ -69,7 +78,7 @@ export async function generateAICommentary(pliesList, currentPly) {
       }
     } catch (_) {}
   }
-
+  
   const fen = game.fen();
   const moveNumber = Math.ceil(pliesList.length / 2);
 
