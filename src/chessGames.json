@@ -1,0 +1,380 @@
+[
+  {
+    "chsGm": {
+      "Id": 1,
+      "GName": "Ruy Lopez Spanish/Morphy Defense/Exchange Variation/Alekhine Variation  Both queens dead Beginning only",
+      "PauseFor": 3333,
+      "StrtPos": "",
+      "Remind": ""
+    },
+    "moves": [
+      { "MoveNo": "1", "Wh": "e2-e4", "Bl": "e7-e5", "Annot": "", "AdAnnot": "", "RtfAnnot": "" },
+      { "MoveNo": "2", "Wh": "g1-f3", "Bl": "b8-c6", "Annot": "", "AdAnnot": "", "RtfAnnot": "" },
+      { "MoveNo": "3", "Wh": "f1-b5", "Bl": "a7-a6", "Annot": "", "AdAnnot": "Straight after the Bishop", "RtfAnnot": "" },
+      { "MoveNo": "4", "Wh": "b5xc6", "Bl": "d7xc6", "Annot": "", "AdAnnot": "Exchange takes place right here", "RtfAnnot": "" },
+      { "MoveNo": "5", "Wh": "d2-d4", "Bl": "e5xd4", "Annot": "", "AdAnnot": "And here by black", "RtfAnnot": "" },
+      { "MoveNo": "6", "Wh": "d1xd4", "Bl": "d8xd4", "Annot": "", "AdAnnot": "after which queens exchange", "RtfAnnot": "" },
+      { "MoveNo": "7", "Wh": "f3xd4", "Bl": "", "Annot": "", "AdAnnot": "", "RtfAnnot": "" }
+    ]
+  },
+    {    "chsGm": {
+      "Id":  2,
+      "GName": "Rook vs Queen 1",
+      "PauseFor": 2222,
+      "StrtPos": "e8=bk\r\ng7=wkr\r\nb3=bq\r\ne1=wk",
+      "Remind": ""
+    },
+    "moves": [
+      {
+        "Id":  2,
+        "MoveNo": "1",
+        "Wh": "g7-g2",
+        "Bl": "b3-b1+",
+        "ChsBkdPrt": "",
+        "Annot": "g7-g2  b3-b1+ ",
+        "AdAnnot": "",
+        "RtfAnnot": ""
+      },
+      {
+        "Id":  2,
+        "MoveNo": "2",
+        "Wh": "e1-e2",
+        "Bl": "e8-d7",
+        "ChsBkdPrt": "",
+        "Annot": "e1-e2  e8-d7  ",
+        "AdAnnot": "",
+        "RtfAnnot": ""
+      },
+      {
+        "Id":  2,
+        "MoveNo": "3",
+        "Wh": "g2-g4",
+        "Bl": "d7-e6",
+        "ChsBkdPrt": "",
+        "Annot": "g2-g4  d7-e6  ",
+        "AdAnnot": "",
+        "RtfAnnot": ""
+      },
+      {
+        "Id":  2,
+        "MoveNo": "4",
+        "Wh": "g4-d4",
+        "Bl": "e6-e5",
+        "ChsBkdPrt": "",
+        "Annot": "g4-d4  e6-e5  ",
+        "AdAnnot": "",
+        "RtfAnnot": ""
+      },
+      {
+        "Id":  2,
+        "MoveNo": "5",
+        "Wh": "d4-g4",
+        "Bl": "b1-b2+",
+        "ChsBkdPrt": "",
+        "Annot": "d4-g4  b1-b2+ ",
+        "AdAnnot": "",
+        "RtfAnnot": ""
+      },
+      {
+        "Id":  2,
+        "MoveNo": "6",
+        "Wh": "e2-d3",
+        "Bl": "b2-b3+",
+        "ChsBkdPrt": "",
+        "Annot": "e2-d3  b2-b3+ ",
+        "AdAnnot": "",
+        "RtfAnnot": ""
+      },
+      {
+        "Id":  2,
+        "MoveNo": "7",
+        "Wh": "d3-d2",
+        "Bl": "b3-h3",
+        "ChsBkdPrt": "",
+        "Annot": "d3-d2  b3-h3  ",
+        "AdAnnot": "",
+        "RtfAnnot": ""
+      },
+      {
+        "Id":  2,
+        "MoveNo": "8",
+        "Wh": "g4-c4",
+        "Bl": "h3-g3",
+        "ChsBkdPrt": "",
+        "Annot": "g4-c4  h3-g3  ",
+        "AdAnnot": "",
+        "RtfAnnot": ""
+      },
+      {
+        "Id":  2,
+        "MoveNo": "9",
+        "Wh": "c4-b4",
+        "Bl": "e5-d5",
+        "ChsBkdPrt": "",
+        "Annot": "c4-b4  e5-d5  ",
+        "AdAnnot": "",
+        "RtfAnnot": ""
+      },
+      {
+        "Id":  2,
+        "MoveNo": "10",
+        "Wh": "d2-e2",
+        "Bl": "g3-g6",
+        "ChsBkdPrt": "",
+        "Annot": "d2-e2  g3-g6  ",
+        "AdAnnot": "",
+        "RtfAnnot": ""
+      },
+      {
+        "Id":  2,
+        "MoveNo": "11",
+        "Wh": "e2-e3",
+        "Bl": "g6-f6",
+        "ChsBkdPrt": "",
+        "Annot": "e2-e3  g6-f6  ",
+        "AdAnnot": "",
+        "RtfAnnot": ""
+      },
+      {
+        "Id":  2,
+        "MoveNo": "12",
+        "Wh": "b4-f4",
+        "Bl": "f6-e7+",
+        "ChsBkdPrt": "",
+        "Annot": "b4-f4  f6-e7+ ",
+        "AdAnnot": "",
+        "RtfAnnot": ""
+      },
+      {
+        "Id":  2,
+        "MoveNo": "13",
+        "Wh": "e3-d3",
+        "Bl": "e7-h7+",
+        "ChsBkdPrt": "",
+        "Annot": "e3-d3  e7-h7+ ",
+        "AdAnnot": "",
+        "RtfAnnot": ""
+      },
+      {
+        "Id":  2,
+        "MoveNo": "14",
+        "Wh": "d3-e2",
+        "Bl": "h7-h3",
+        "ChsBkdPrt": "",
+        "Annot": "d3-e2  h7-h3  ",
+        "AdAnnot": "",
+        "RtfAnnot": ""
+      },
+      {
+        "Id":  2,
+        "MoveNo": "15",
+        "Wh": "f4-f8",
+        "Bl": "h3-h5+",
+        "ChsBkdPrt": "",
+        "Annot": "f4-f8  h3-h5+ ",
+        "AdAnnot": "",
+        "RtfAnnot": ""
+      },
+      {
+        "Id":  2,
+        "MoveNo": "16",
+        "Wh": "e2-f2",
+        "Bl": "d5-e4",
+        "ChsBkdPrt": "",
+        "Annot": "e2-f2  d5-e4  ",
+        "AdAnnot": "",
+        "RtfAnnot": ""
+      },
+      {
+        "Id":  2,
+        "MoveNo": "17",
+        "Wh": "f8-a8",
+        "Bl": "h5-h2+",
+        "ChsBkdPrt": "",
+        "Annot": "f8-a8  h5-h2+ ",
+        "AdAnnot": "",
+        "RtfAnnot": ""
+      },
+      {
+        "Id":  2,
+        "MoveNo": "18",
+        "Wh": "f2-e1",
+        "Bl": "h2-g3+",
+        "ChsBkdPrt": "",
+        "Annot": "f2-e1  h2-g3+ ",
+        "AdAnnot": "",
+        "RtfAnnot": ""
+      },
+      {
+        "Id":  2,
+        "MoveNo": "19",
+        "Wh": "e1-f1",
+        "Bl": "g3-f3+",
+        "ChsBkdPrt": "",
+        "Annot": "e1-f1  g3-f3+ ",
+        "AdAnnot": "",
+        "RtfAnnot": ""
+      },
+      {
+        "Id":  2,
+        "MoveNo": "20",
+        "Wh": "f1-e1",
+        "Bl": "f3-e3+",
+        "ChsBkdPrt": "",
+        "Annot": "f1-e1  f3-e3+ ",
+        "AdAnnot": "",
+        "RtfAnnot": ""
+      },
+      {
+        "Id":  2,
+        "MoveNo": "21",
+        "Wh": "e1-d1",
+        "Bl": "e3-b3+",
+        "ChsBkdPrt": "",
+        "Annot": "e1-d1  e3-b3+ ",
+        "AdAnnot": "",
+        "RtfAnnot": ""
+      },
+      {
+        "Id":  2,
+        "MoveNo": "22",
+        "Wh": "d1-e1",
+        "Bl": "b3-b6",
+        "ChsBkdPrt": "",
+        "Annot": "d1-e1  b3-b6  ",
+        "AdAnnot": "",
+        "RtfAnnot": ""
+      },
+      {
+        "Id":  2,
+        "MoveNo": "23",
+        "Wh": "e1-e2",
+        "Bl": "b6-c6",
+        "ChsBkdPrt": "",
+        "Annot": "e1-e2  b6-c6  ",
+        "AdAnnot": "",
+        "RtfAnnot": ""
+      },
+      {
+        "Id":  2,
+        "MoveNo": "24",
+        "Wh": "a8-d8",
+        "Bl": "c6-b5+",
+        "ChsBkdPrt": "",
+        "Annot": "a8-d8  c6-b5+ ",
+        "AdAnnot": "",
+        "RtfAnnot": ""
+      },
+      {
+        "Id":  2,
+        "MoveNo": "25",
+        "Wh": "e2-d1",
+        "Bl": "e4-e3",
+        "ChsBkdPrt": "",
+        "Annot": "e2-d1  e4-e3  ",
+        "AdAnnot": "",
+        "RtfAnnot": ""
+      },
+      {
+        "Id":  2,
+        "MoveNo": "26",
+        "Wh": "d1-c2",
+        "Bl": "b5-f5+",
+        "ChsBkdPrt": "",
+        "Annot": "d1-c2  b5-f5+ ",
+        "AdAnnot": "",
+        "RtfAnnot": ""
+      },
+      {
+        "Id":  2,
+        "MoveNo": "27",
+        "Wh": "c2-b3",
+        "Bl": "f5-e6+",
+        "ChsBkdPrt": "",
+        "Annot": "c2-b3  f5-e6+ ",
+        "AdAnnot": "",
+        "RtfAnnot": ""
+      },
+      {
+        "Id":  2,
+        "MoveNo": "28",
+        "Wh": "b3-c2",
+        "Bl": "e6-c6+",
+        "ChsBkdPrt": "",
+        "Annot": "b3-c2  e6-c6+ ",
+        "AdAnnot": "",
+        "RtfAnnot": ""
+      },
+      {
+        "Id":  2,
+        "MoveNo": "29",
+        "Wh": "c2-b3",
+        "Bl": "c6-b6+",
+        "ChsBkdPrt": "",
+        "Annot": "c2-b3  c6-b6+ ",
+        "AdAnnot": "",
+        "RtfAnnot": ""
+      },
+      {
+        "Id":  2,
+        "MoveNo": "30",
+        "Wh": "b3-c4",
+        "Bl": "b6xd8",
+        "ChsBkdPrt": "",
+        "Annot": "b3-c4  b6xd8  ",
+        "AdAnnot": "",
+        "RtfAnnot": ""
+      },
+      {
+        "Id":  2,
+        "MoveNo": "31",
+        "Wh": "c4-c5",
+        "Bl": "e3-d3",
+        "ChsBkdPrt": "",
+        "Annot": "c4-c5  e3-d3  ",
+        "AdAnnot": "",
+        "RtfAnnot": ""
+      },
+      {
+        "Id":  2,
+        "MoveNo": "32",
+        "Wh": "c5-c6",
+        "Bl": "d3-c4",
+        "ChsBkdPrt": "",
+        "Annot": "c5-c6  d3-c4  ",
+        "AdAnnot": "",
+        "RtfAnnot": ""
+      },
+      {
+        "Id":  2,
+        "MoveNo": "33",
+        "Wh": "c6-b7",
+        "Bl": "c4-c5",
+        "ChsBkdPrt": "",
+        "Annot": "c6-b7  c4-c5  ",
+        "AdAnnot": "",
+        "RtfAnnot": ""
+      },
+      {
+        "Id":  2,
+        "MoveNo": "34",
+        "Wh": "b7-a7",
+        "Bl": "c5-c6",
+        "ChsBkdPrt": "",
+        "Annot": "b7-a7  c5-c6  ",
+        "AdAnnot": "",
+        "RtfAnnot": ""
+      },
+      {
+        "Id":  2,
+        "MoveNo": "35",
+        "Wh": "a7-a6",
+        "Bl": "d8-b6++",
+        "ChsBkdPrt": "",
+        "Annot": "a7-a6  d8-b6++",
+        "AdAnnot": "",
+        "RtfAnnot": ""
+      }
+    ]
+  }
+]
