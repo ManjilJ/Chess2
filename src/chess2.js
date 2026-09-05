@@ -722,34 +722,35 @@ export default function ChessLedger() {
     // Generate real-time tactical commentary for this specific move in the
     // background; the board has already moved on, so this only affects when
     // the annotation text underneath the board fills in.
-    generateAICommentary(next, ply, activeInitialFEN).then((comment) => {
-      // Format with a clear prefix (e.g., "1. e4: ..." or "1... c5: ...")
-      const movePrefix = isWhite ? `${moveNo}. ` : `${moveNo}... `;
-      const formattedComment = `${movePrefix}${comment}`;
+    generateAICommentary(next, ply, activeInitialFEN)
+      .then((comment) => {
+        // Format with a clear prefix (e.g., "1. e4: ..." or "1... c5: ...")
+        const movePrefix = isWhite ? `${moveNo}. ` : `${moveNo}... `;
+        const formattedComment = `${movePrefix}${comment}`;
 
-      setAnnotations((prev) => {
-        const existing = prev[moveNo] || { annot: "", adAnnot: "" };
-        let combinedAdAnnot = "";
+        setAnnotations((prev) => {
+          const existing = prev[moveNo] || { annot: "", adAnnot: "" };
+          let combinedAdAnnot = "";
 
-        if (isWhite) {
-          // White starts the move pair
-          combinedAdAnnot = formattedComment;
-        } else {
-          // Black completes the pair: preserve White's comment and append Black's below it
-          combinedAdAnnot = existing.adAnnot
-            ? `${existing.adAnnot}\n${formattedComment}`
-            : formattedComment;
-        }
+          if (isWhite) {
+            // White starts the move pair
+            combinedAdAnnot = formattedComment;
+          } else {
+            // Black completes the pair: preserve White's comment and append Black's below it
+            combinedAdAnnot = existing.adAnnot
+              ? `${existing.adAnnot}\n${formattedComment}`
+              : formattedComment;
+          }
 
-        return {
-          ...prev,
-          [moveNo]: {
-            ...existing,
-            adAnnot: combinedAdAnnot,
-          },
-        };
-      });
-    })
+          return {
+            ...prev,
+            [moveNo]: {
+              ...existing,
+              adAnnot: combinedAdAnnot,
+            },
+          };
+        });
+      })
       .catch((err) => {
         console.warn("Commentary generation failed:", err);
       });

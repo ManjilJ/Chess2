@@ -44,6 +44,19 @@ async function getActiveModel() {
   return "llama-3.3-70b-versatile";
 }
 
+/**
+ * Generates a short Grandmaster-style commentary line for one move.
+ *
+ * @param {Array} pliesList - full move history up to and including currentPly
+ * @param {Object} currentPly - the move just played ({ from, to, promotion, pieceColor, ... })
+ * @param {string} [startFen] - FEN of the game's actual starting position.
+ *   Pass this whenever the game may not have started from the standard
+ *   array (e.g. a custom Setup Position) — without it, the board used to
+ *   build the FEN sent to the AI defaults to the standard starting
+ *   position, which caused the AI to "see" pieces (pawns, etc.) that were
+ *   never actually on the board, and comment on impossible moves as a
+ *   result.
+ */
 export async function generateAICommentary(pliesList, currentPly, startFen) {
   if (!currentPly || !currentPly.from || !currentPly.to) return "";
 
@@ -55,8 +68,8 @@ export async function generateAICommentary(pliesList, currentPly, startFen) {
   }
 
   // 1. Rebuild board state for FEN and SAN move notation, starting from the
-  //    *actual* game's starting position (custom setups included), not
-  //    always the standard array.
+  //    actual game's starting position (custom Setup Position included),
+  //    not always the standard array.
   let game;
   try {
     game = startFen ? new Chess(startFen) : new Chess();
@@ -76,9 +89,15 @@ export async function generateAICommentary(pliesList, currentPly, startFen) {
       if (i === pliesList.length - 1 && res) {
         lastSan = res.san;
       }
-    } catch (_) {}
+    } catch (_) { }
   }
-  
+
+  // Plain, honest fallback text — used any time we don't have a usable
+  // AI-generated line (a request failure, or a reasoning model that burned
+  // its token budget on <think>...</think> and left nothing after it).
+  // Prefers real SAN (e.g. "e4") once we have it, over raw squares.
+  const plainFallback = `${mover} plays ${lastSan || `${currentPly.from}-${currentPly.to}`}.`;
+
   const fen = game.fen();
   const moveNumber = Math.ceil(pliesList.length / 2);
 
@@ -118,7 +137,15 @@ Board FEN: ${fen}`;
     if (response.ok) {
       const data = await response.json();
       if (data.choices && data.choices[0]?.message?.content) {
-        return data.choices[0].message.content.trim();
+        // Strip any <think>...</think> block a reasoning model might emit —
+        // whether it closed normally or got cut off mid-thought by
+        // max_tokens (in which case there's no closing tag at all).
+        const cleaned = data.choices[0].message.content
+          .replace(/<think>[\s\S]*?<\/think>/gi, "")
+          .replace(/<think>[\s\S]*$/gi, "")
+          .trim();
+        if (cleaned) return cleaned;
+        console.warn(`Model ${modelToUse} returned only reasoning, no final answer — using plain fallback.`);
       }
     } else {
       const errText = await response.text();
@@ -128,7 +155,7 @@ Board FEN: ${fen}`;
     console.error("AI Fetch Error:", err);
   }
 
-  return `${mover} plays ${lastSan || currentPly.to}, contesting the position.`;
+  return plainFallback;
 }
 
 export const generateTacticalCommentary = generateAICommentary;
