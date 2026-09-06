@@ -8,17 +8,67 @@
       "Remind": ""
     },
     "moves": [
-      { "MoveNo": "1", "Wh": "e2-e4", "Bl": "e7-e5", "Annot": "", "AdAnnot": "", "RtfAnnot": "" },
-      { "MoveNo": "2", "Wh": "g1-f3", "Bl": "b8-c6", "Annot": "", "AdAnnot": "", "RtfAnnot": "" },
-      { "MoveNo": "3", "Wh": "f1-b5", "Bl": "a7-a6", "Annot": "", "AdAnnot": "Straight after the Bishop", "RtfAnnot": "" },
-      { "MoveNo": "4", "Wh": "b5xc6", "Bl": "d7xc6", "Annot": "", "AdAnnot": "Exchange takes place right here", "RtfAnnot": "" },
-      { "MoveNo": "5", "Wh": "d2-d4", "Bl": "e5xd4", "Annot": "", "AdAnnot": "And here by black", "RtfAnnot": "" },
-      { "MoveNo": "6", "Wh": "d1xd4", "Bl": "d8xd4", "Annot": "", "AdAnnot": "after which queens exchange", "RtfAnnot": "" },
-      { "MoveNo": "7", "Wh": "f3xd4", "Bl": "", "Annot": "", "AdAnnot": "", "RtfAnnot": "" }
+      {
+        "MoveNo": "1",
+        "Wh": "e2-e4",
+        "Bl": "e7-e5",
+        "Annot": "",
+        "AdAnnot": "",
+        "RtfAnnot": ""
+      },
+      {
+        "MoveNo": "2",
+        "Wh": "g1-f3",
+        "Bl": "b8-c6",
+        "Annot": "",
+        "AdAnnot": "",
+        "RtfAnnot": ""
+      },
+      {
+        "MoveNo": "3",
+        "Wh": "f1-b5",
+        "Bl": "a7-a6",
+        "Annot": "",
+        "AdAnnot": "Straight after the Bishop",
+        "RtfAnnot": ""
+      },
+      {
+        "MoveNo": "4",
+        "Wh": "b5xc6",
+        "Bl": "d7xc6",
+        "Annot": "",
+        "AdAnnot": "Exchange takes place right here",
+        "RtfAnnot": ""
+      },
+      {
+        "MoveNo": "5",
+        "Wh": "d2-d4",
+        "Bl": "e5xd4",
+        "Annot": "",
+        "AdAnnot": "And here by black",
+        "RtfAnnot": ""
+      },
+      {
+        "MoveNo": "6",
+        "Wh": "d1xd4",
+        "Bl": "d8xd4",
+        "Annot": "",
+        "AdAnnot": "after which queens exchange",
+        "RtfAnnot": ""
+      },
+      {
+        "MoveNo": "7",
+        "Wh": "f3xd4",
+        "Bl": "",
+        "Annot": "",
+        "AdAnnot": "",
+        "RtfAnnot": ""
+      }
     ]
   },
-    {    "chsGm": {
-      "Id":  2,
+  {
+    "chsGm": {
+      "Id": 2,
       "GName": "Rook vs Queen 1",
       "PauseFor": 2222,
       "StrtPos": "e8=bk\r\ng7=wkr\r\nb3=bq\r\ne1=wk",
@@ -26,7 +76,7 @@
     },
     "moves": [
       {
-        "Id":  2,
+        "Id": 2,
         "MoveNo": "1",
         "Wh": "g7-g2",
         "Bl": "b3-b1+",
@@ -36,7 +86,7 @@
         "RtfAnnot": ""
       },
       {
-        "Id":  2,
+        "Id": 2,
         "MoveNo": "2",
         "Wh": "e1-e2",
         "Bl": "e8-d7",
@@ -46,7 +96,7 @@
         "RtfAnnot": ""
       },
       {
-        "Id":  2,
+        "Id": 2,
         "MoveNo": "3",
         "Wh": "g2-g4",
         "Bl": "d7-e6",
@@ -56,7 +106,7 @@
         "RtfAnnot": ""
       },
       {
-        "Id":  2,
+        "Id": 2,
         "MoveNo": "4",
         "Wh": "g4-d4",
         "Bl": "e6-e5",
@@ -66,7 +116,7 @@
         "RtfAnnot": ""
       },
       {
-        "Id":  2,
+        "Id": 2,
         "MoveNo": "5",
         "Wh": "d4-g4",
         "Bl": "b1-b2+",
@@ -76,7 +126,7 @@
         "RtfAnnot": ""
       },
       {
-        "Id":  2,
+        "Id": 2,
         "MoveNo": "6",
         "Wh": "e2-d3",
         "Bl": "b2-b3+",
@@ -86,7 +136,7 @@
         "RtfAnnot": ""
       },
       {
-        "Id":  2,
+        "Id": 2,
         "MoveNo": "7",
         "Wh": "d3-d2",
         "Bl": "b3-h3",
@@ -96,7 +146,7 @@
         "RtfAnnot": ""
       },
       {
-        "Id":  2,
+        "Id": 2,
         "MoveNo": "8",
         "Wh": "g4-c4",
         "Bl": "h3-g3",
@@ -106,7 +156,7 @@
         "RtfAnnot": ""
       },
       {
-        "Id":  2,
+        "Id": 2,
         "MoveNo": "9",
         "Wh": "c4-b4",
         "Bl": "e5-d5",
@@ -116,7 +166,7 @@
         "RtfAnnot": ""
       },
       {
-        "Id":  2,
+        "Id": 2,
         "MoveNo": "10",
         "Wh": "d2-e2",
         "Bl": "g3-g6",
@@ -126,7 +176,7 @@
         "RtfAnnot": ""
       },
       {
-        "Id":  2,
+        "Id": 2,
         "MoveNo": "11",
         "Wh": "e2-e3",
         "Bl": "g6-f6",
@@ -136,7 +186,7 @@
         "RtfAnnot": ""
       },
       {
-        "Id":  2,
+        "Id": 2,
         "MoveNo": "12",
         "Wh": "b4-f4",
         "Bl": "f6-e7+",
@@ -146,7 +196,7 @@
         "RtfAnnot": ""
       },
       {
-        "Id":  2,
+        "Id": 2,
         "MoveNo": "13",
         "Wh": "e3-d3",
         "Bl": "e7-h7+",
@@ -156,7 +206,7 @@
         "RtfAnnot": ""
       },
       {
-        "Id":  2,
+        "Id": 2,
         "MoveNo": "14",
         "Wh": "d3-e2",
         "Bl": "h7-h3",
@@ -166,7 +216,7 @@
         "RtfAnnot": ""
       },
       {
-        "Id":  2,
+        "Id": 2,
         "MoveNo": "15",
         "Wh": "f4-f8",
         "Bl": "h3-h5+",
@@ -176,7 +226,7 @@
         "RtfAnnot": ""
       },
       {
-        "Id":  2,
+        "Id": 2,
         "MoveNo": "16",
         "Wh": "e2-f2",
         "Bl": "d5-e4",
@@ -186,7 +236,7 @@
         "RtfAnnot": ""
       },
       {
-        "Id":  2,
+        "Id": 2,
         "MoveNo": "17",
         "Wh": "f8-a8",
         "Bl": "h5-h2+",
@@ -196,7 +246,7 @@
         "RtfAnnot": ""
       },
       {
-        "Id":  2,
+        "Id": 2,
         "MoveNo": "18",
         "Wh": "f2-e1",
         "Bl": "h2-g3+",
@@ -206,7 +256,7 @@
         "RtfAnnot": ""
       },
       {
-        "Id":  2,
+        "Id": 2,
         "MoveNo": "19",
         "Wh": "e1-f1",
         "Bl": "g3-f3+",
@@ -216,7 +266,7 @@
         "RtfAnnot": ""
       },
       {
-        "Id":  2,
+        "Id": 2,
         "MoveNo": "20",
         "Wh": "f1-e1",
         "Bl": "f3-e3+",
@@ -226,7 +276,7 @@
         "RtfAnnot": ""
       },
       {
-        "Id":  2,
+        "Id": 2,
         "MoveNo": "21",
         "Wh": "e1-d1",
         "Bl": "e3-b3+",
@@ -236,7 +286,7 @@
         "RtfAnnot": ""
       },
       {
-        "Id":  2,
+        "Id": 2,
         "MoveNo": "22",
         "Wh": "d1-e1",
         "Bl": "b3-b6",
@@ -246,7 +296,7 @@
         "RtfAnnot": ""
       },
       {
-        "Id":  2,
+        "Id": 2,
         "MoveNo": "23",
         "Wh": "e1-e2",
         "Bl": "b6-c6",
@@ -256,7 +306,7 @@
         "RtfAnnot": ""
       },
       {
-        "Id":  2,
+        "Id": 2,
         "MoveNo": "24",
         "Wh": "a8-d8",
         "Bl": "c6-b5+",
@@ -266,7 +316,7 @@
         "RtfAnnot": ""
       },
       {
-        "Id":  2,
+        "Id": 2,
         "MoveNo": "25",
         "Wh": "e2-d1",
         "Bl": "e4-e3",
@@ -276,7 +326,7 @@
         "RtfAnnot": ""
       },
       {
-        "Id":  2,
+        "Id": 2,
         "MoveNo": "26",
         "Wh": "d1-c2",
         "Bl": "b5-f5+",
@@ -286,7 +336,7 @@
         "RtfAnnot": ""
       },
       {
-        "Id":  2,
+        "Id": 2,
         "MoveNo": "27",
         "Wh": "c2-b3",
         "Bl": "f5-e6+",
@@ -296,7 +346,7 @@
         "RtfAnnot": ""
       },
       {
-        "Id":  2,
+        "Id": 2,
         "MoveNo": "28",
         "Wh": "b3-c2",
         "Bl": "e6-c6+",
@@ -306,7 +356,7 @@
         "RtfAnnot": ""
       },
       {
-        "Id":  2,
+        "Id": 2,
         "MoveNo": "29",
         "Wh": "c2-b3",
         "Bl": "c6-b6+",
@@ -316,7 +366,7 @@
         "RtfAnnot": ""
       },
       {
-        "Id":  2,
+        "Id": 2,
         "MoveNo": "30",
         "Wh": "b3-c4",
         "Bl": "b6xd8",
@@ -326,7 +376,7 @@
         "RtfAnnot": ""
       },
       {
-        "Id":  2,
+        "Id": 2,
         "MoveNo": "31",
         "Wh": "c4-c5",
         "Bl": "e3-d3",
@@ -336,7 +386,7 @@
         "RtfAnnot": ""
       },
       {
-        "Id":  2,
+        "Id": 2,
         "MoveNo": "32",
         "Wh": "c5-c6",
         "Bl": "d3-c4",
@@ -346,7 +396,7 @@
         "RtfAnnot": ""
       },
       {
-        "Id":  2,
+        "Id": 2,
         "MoveNo": "33",
         "Wh": "c6-b7",
         "Bl": "c4-c5",
@@ -356,7 +406,7 @@
         "RtfAnnot": ""
       },
       {
-        "Id":  2,
+        "Id": 2,
         "MoveNo": "34",
         "Wh": "b7-a7",
         "Bl": "c5-c6",
@@ -366,12 +416,434 @@
         "RtfAnnot": ""
       },
       {
-        "Id":  2,
+        "Id": 2,
         "MoveNo": "35",
         "Wh": "a7-a6",
         "Bl": "d8-b6++",
         "ChsBkdPrt": "",
         "Annot": "a7-a6  d8-b6++",
+        "AdAnnot": "",
+        "RtfAnnot": ""
+      }
+    ]
+  },
+
+  {
+    "chsGm": {
+      "Id": 3,
+      "GName": "Magnus v Hikaru 2020 World Championship Game 6 Grand Final",
+      "PauseFor": 2234,
+      "StrtPos": "",
+      "Remind": ""
+    },
+    "moves": [
+      {
+        "Id": 3,
+        "MoveNo": "1",
+        "Wh": "d2-d4",
+        "Bl": "g8-f6",
+        "ChsBkdPrt": "",
+        "Annot": "White stakes an immediate claim in the center, opening lines of development for the queen and dark-squared bishop. Black prevents an immediate e2-e4 and keeps his defensive options flexible.",
+        "AdAnnot": "",
+        "RtfAnnot": ""
+      },
+      {
+        "Id": 3,
+        "MoveNo": "2",
+        "Wh": "c2-c4",
+        "Bl": "e7-e6",
+        "ChsBkdPrt": "",
+        "Annot": "White broadens his spatial grip on the center and clears c3 for knight development. Black prepares classical central counterplay while keeping the door open for a Nimzo-Indian or Queen's Gambit.",
+        "AdAnnot": "",
+        "RtfAnnot": ""
+      },
+      {
+        "Id": 3,
+        "MoveNo": "3",
+        "Wh": "b1-c3",
+        "Bl": "f8-b4",
+        "ChsBkdPrt": "",
+        "Annot": "Developing naturally and renewing the threat to establish full central domination with e2-e4. The hallmark of the Nimzo-Indian Defense, immediately pinning the knight to contest the vital e4-square.",
+        "AdAnnot": "",
+        "RtfAnnot": ""
+      },
+      {
+        "Id": 3,
+        "MoveNo": "4",
+        "Wh": "e2-e3",
+        "Bl": "O-O",
+        "ChsBkdPrt": "",
+        "Annot": "The solid Rubinstein System shores up d4 and paves the way for kingside piece mobilization. Black ushers his monarch into early safety before initiating operations in the center.",
+        "AdAnnot": "",
+        "RtfAnnot": ""
+      },
+      {
+        "Id": 3,
+        "MoveNo": "5",
+        "Wh": "f1-d3",
+        "Bl": "c7-c5",
+        "ChsBkdPrt": "",
+        "Annot": "The bishop assumes an aggressive post aimed directly at Black's kingside. Black immediately counterattacks the base of White's center, challenging the d4-pawn.",
+        "AdAnnot": "",
+        "RtfAnnot": ""
+      },
+      {
+        "Id": 3,
+        "MoveNo": "6",
+        "Wh": "g1-e2",
+        "Bl": "d7-d5",
+        "ChsBkdPrt": "",
+        "Annot": "Developing the knight here prevents doubled pawns should Black capture on c3 and leaves the f-pawn unblocked. Black strikes boldly in the center, precipitating a full-scale pawn clash.",
+        "AdAnnot": "",
+        "RtfAnnot": ""
+      },
+      {
+        "Id": 3,
+        "MoveNo": "7",
+        "Wh": "a2-a3",
+        "Bl": "b4xc3",
+        "ChsBkdPrt": "",
+        "Annot": "Carlsen immediately puts the question to the bishop, compelling Black to declare his intentions. Black cedes the bishop pair to inflict doubled pawns on White, a quintessential Nimzo-Indian transaction.",
+        "AdAnnot": "",
+        "RtfAnnot": ""
+      },
+      {
+        "Id": 3,
+        "MoveNo": "8",
+        "Wh": "b2xc3",
+        "Bl": "d5xc4",
+        "ChsBkdPrt": "",
+        "Annot": "White recaptures toward the center, accepting structural asymmetries for long-term dynamic compensation. Black resolves the central tension and forces White's bishop to move a second time.",
+        "AdAnnot": "",
+        "RtfAnnot": ""
+      },
+      {
+        "Id": 3,
+        "MoveNo": "9",
+        "Wh": "d3xc4",
+        "Bl": "d8-c7",
+        "ChsBkdPrt": "",
+        "Annot": "The bishop recaptures while maintaining pressure along the a2-g8 diagonal. Black lines up on the c-file against White's bishop, preparing ...b6 and ...Bb7.",
+        "AdAnnot": "",
+        "RtfAnnot": ""
+      },
+      {
+        "Id": 3,
+        "MoveNo": "10",
+        "Wh": "c4-a2",
+        "Bl": "b7-b6",
+        "ChsBkdPrt": "",
+        "Annot": "Anticipating discoveries along the c-file, the bishop retreats to an ideal, secure diagonal. Black prepares to fianchetto his light-squared bishop to exert long-range pressure down the board.",
+        "AdAnnot": "",
+        "RtfAnnot": ""
+      },
+      {
+        "Id": 3,
+        "MoveNo": "11",
+        "Wh": "O-O",
+        "Bl": "c8-a6",
+        "ChsBkdPrt": "",
+        "Annot": "White tucks his king away and readies his rooks for the central breakthrough. Black boldly pins the knight against the f1-rook, hindering White's piece coordination.",
+        "AdAnnot": "",
+        "RtfAnnot": ""
+      },
+      {
+        "Id": 3,
+        "MoveNo": "12",
+        "Wh": "c1-b2",
+        "Bl": "b8-c6",
+        "ChsBkdPrt": "",
+        "Annot": "Developing the bishop on the long diagonal to support the eventual central advance. Black brings another piece into the fray, exerting pressure on the d4-square.",
+        "AdAnnot": "",
+        "RtfAnnot": ""
+      },
+      {
+        "Id": 3,
+        "MoveNo": "13",
+        "Wh": "a1-c1",
+        "Bl": "a8-c8",
+        "ChsBkdPrt": "",
+        "Annot": "Stationing the rook behind the c-pawn readies the thematic c3-c4 thrust. Black logically opposes White along the semi-open c-file.",
+        "AdAnnot": "",
+        "RtfAnnot": ""
+      },
+      {
+        "Id": 3,
+        "MoveNo": "14",
+        "Wh": "c3-c4",
+        "Bl": "c5xd4",
+        "ChsBkdPrt": "",
+        "Annot": "Carlsen advances his mobile pawn center, seizing space and activating his bishop on b2. Black clarifies the central tension, seeking to saddle White with vulnerable hanging pawns.",
+        "AdAnnot": "",
+        "RtfAnnot": ""
+      },
+      {
+        "Id": 3,
+        "MoveNo": "15",
+        "Wh": "e3xd4",
+        "Bl": "c7-e7",
+        "ChsBkdPrt": "",
+        "Annot": "White accepts hanging pawns, obtaining dynamic central control and sweeping diagonals for both bishops. The queen vacates the c-file to link the rooks and increase pressure on a3.",
+        "AdAnnot": "",
+        "RtfAnnot": ""
+      },
+      {
+        "Id": 3,
+        "MoveNo": "16",
+        "Wh": "d4-d5",
+        "Bl": "e6xd5",
+        "ChsBkdPrt": "",
+        "Annot": "A classic central breakthrough that detonates the position and unleashes White's pieces. Black must capture, as permitting the pawn to advance further would fatally suffocate his position.",
+        "AdAnnot": "",
+        "RtfAnnot": ""
+      },
+      {
+        "Id": 3,
+        "MoveNo": "17",
+        "Wh": "f1-e1",
+        "Bl": "a6xc4",
+        "ChsBkdPrt": "",
+        "Annot": "Carlsen spurns an immediate recapture to seize the open e-file against Black's queen. Black snatches a pawn, hoping his active pieces can weather the impending tempest.",
+        "AdAnnot": "",
+        "RtfAnnot": ""
+      },
+      {
+        "Id": 3,
+        "MoveNo": "18",
+        "Wh": "e2-g3",
+        "Bl": "e7-d8",
+        "ChsBkdPrt": "",
+        "Annot": "The knight leaps into the attack with tempo, clearing the e-file and aiming directly at the kingside. Black's queen retreats to safety, parrying immediate tactical threats.",
+        "AdAnnot": "",
+        "RtfAnnot": ""
+      },
+      {
+        "Id": 3,
+        "MoveNo": "19",
+        "Wh": "a2-b1",
+        "Bl": "b6-b5",
+        "ChsBkdPrt": "",
+        "Annot": "Repositioning the bishop along the lethal b1-h7 diagonal signals an all-out assault against Black's king. Black bolsters his c4-bishop, but queenside pawn moves offer little defense against the gathering storm.",
+        "AdAnnot": "",
+        "RtfAnnot": ""
+      },
+      {
+        "Id": 3,
+        "MoveNo": "20",
+        "Wh": "g3-f5",
+        "Bl": "d5-d4",
+        "ChsBkdPrt": "",
+        "Annot": "A menacing outpost that exerts suffocating pressure on g7 and invites the white queen into the attack. Black pushes his passed pawn to shut down the b2-bishop's line of fire.",
+        "AdAnnot": "",
+        "RtfAnnot": ""
+      },
+      {
+        "Id": 3,
+        "MoveNo": "21",
+        "Wh": "d1-d2",
+        "Bl": "c4-e6",
+        "ChsBkdPrt": "",
+        "Annot": "The queen prepares to swing into the kingside via g5 or h6 while connecting rooks along the first rank. Black seeks to eliminate the troublesome f5-knight and relieve the defensive burden.",
+        "AdAnnot": "",
+        "RtfAnnot": ""
+      },
+      {
+        "Id": 3,
+        "MoveNo": "22",
+        "Wh": "c1-c5",
+        "Bl": "a7-a6",
+        "ChsBkdPrt": "",
+        "Annot": "Carlsen lifts his rook with lethal versatility, intending to transfer it into the attack or double on the rank. Black covers the b5-pawn, but this passive gesture leaves his king bereft of reinforcements.",
+        "AdAnnot": "",
+        "RtfAnnot": ""
+      },
+      {
+        "Id": 3,
+        "MoveNo": "23",
+        "Wh": "f5xg7",
+        "Bl": "g8xg7",
+        "ChsBkdPrt": "",
+        "Annot": "A magnificent piece sacrifice that demolishes the pawn shield guarding Black's king. Black has no choice but to accept, stepping into a devastating crossfire.",
+        "AdAnnot": "",
+        "RtfAnnot": ""
+      },
+      {
+        "Id": 3,
+        "MoveNo": "24",
+        "Wh": "d2-g5",
+        "Bl": "g7-h8",
+        "ChsBkdPrt": "",
+        "Annot": "Delivering check with tempo and driving the monarch deeper into the corner. The only legal response, leaving Black's king completely cornered.",
+        "AdAnnot": "",
+        "RtfAnnot": ""
+      },
+      {
+        "Id": 3,
+        "MoveNo": "25",
+        "Wh": "g5-h4",
+        "Bl": "f8-g8",
+        "ChsBkdPrt": "",
+        "Annot": "The queen pivots to pin the f6-knight while threatening mate, tightening the lethal noose. Black seeks counterplay along the g-file and attempts to overprotect his monarch.",
+        "AdAnnot": "",
+        "RtfAnnot": ""
+      },
+      {
+        "Id": 3,
+        "MoveNo": "26",
+        "Wh": "c5xc6",
+        "Bl": "c8xc6",
+        "ChsBkdPrt": "",
+        "Annot": "A brilliant deflection sacrifice that strips away the key defender of the central d4-pawn. Black must recapture, but his pieces are now fatally uncoordinated.",
+        "AdAnnot": "",
+        "RtfAnnot": ""
+      },
+      {
+        "Id": 3,
+        "MoveNo": "27",
+        "Wh": "b2xd4",
+        "Bl": "h8-g7",
+        "ChsBkdPrt": "",
+        "Annot": "The bishop recaptures with crushing force, renewing the lethal pin against the f6-knight. The king steps forward to defend the pinned knight, but walks into fresh lines of fire.",
+        "AdAnnot": "",
+        "RtfAnnot": ""
+      },
+      {
+        "Id": 3,
+        "MoveNo": "28",
+        "Wh": "h4xh7",
+        "Bl": "g7-f8",
+        "ChsBkdPrt": "",
+        "Annot": "White pockets another pawn with check, thoroughly stripping Black's king of shelter. The king is forced out into the open, fleeing the lethal kingside sector.",
+        "AdAnnot": "",
+        "RtfAnnot": ""
+      },
+      {
+        "Id": 3,
+        "MoveNo": "29",
+        "Wh": "h7-h6",
+        "Bl": "f8-e8",
+        "ChsBkdPrt": "",
+        "Annot": "Checking again to deny the king any respite and keep the defense off-balance. The king scurries to the center, but finds no safe haven on the open board.",
+        "AdAnnot": "",
+        "RtfAnnot": ""
+      },
+      {
+        "Id": 3,
+        "MoveNo": "30",
+        "Wh": "d4xf6",
+        "Bl": "d8-a5",
+        "ChsBkdPrt": "",
+        "Annot": "White chops off the pinned knight, liquidating Black's resistance and keeping material superiority. Black counters with a queen attack against the e1-rook, but the threat is easily parried.",
+        "AdAnnot": "",
+        "RtfAnnot": ""
+      },
+      {
+        "Id": 3,
+        "MoveNo": "31",
+        "Wh": "h6-e3",
+        "Bl": "a5-b6",
+        "ChsBkdPrt": "",
+        "Annot": "White defends the rook while coordinating his queen with the active bishop pair. Offering a queen trade in a desperate bid to dampen White's attacking momentum.",
+        "AdAnnot": "",
+        "RtfAnnot": ""
+      },
+      {
+        "Id": 3,
+        "MoveNo": "32",
+        "Wh": "e1-d1",
+        "Bl": "c6-d6",
+        "ChsBkdPrt": "",
+        "Annot": "Carlsen decisively seizes the open d-file, creating irresistible threats of back-rank infiltration. Black interposes his rook on the d-file to prevent an immediate collapse.",
+        "AdAnnot": "",
+        "RtfAnnot": ""
+      },
+      {
+        "Id": 3,
+        "MoveNo": "33",
+        "Wh": "f6-d4",
+        "Bl": "b6-c6",
+        "ChsBkdPrt": "",
+        "Annot": "The bishop retreats with tempo, hitting the queen while unmasking a battery down the d-file. The queen steps aside to keep an eye on critical central defense points.",
+        "AdAnnot": "",
+        "RtfAnnot": ""
+      },
+      {
+        "Id": 3,
+        "MoveNo": "34",
+        "Wh": "b1-e4",
+        "Bl": "c6-c4",
+        "ChsBkdPrt": "",
+        "Annot": "Another piece joins the attack with tempo, driving the queen to yet another passive square. Black seeks shelter on c4, though his pieces remain hopelessly tied down.",
+        "AdAnnot": "",
+        "RtfAnnot": ""
+      },
+      {
+        "Id": 3,
+        "MoveNo": "35",
+        "Wh": "h2-h3",
+        "Bl": "e8-d7",
+        "ChsBkdPrt": "",
+        "Annot": "A cool, prophylactic measure that provides the white king with luft and quells any back-rank surprises. Black attempts an escape to the queenside, but his king walks into a minefield.",
+        "AdAnnot": "",
+        "RtfAnnot": ""
+      },
+      {
+        "Id": 3,
+        "MoveNo": "36",
+        "Wh": "d1-d2",
+        "Bl": "g8-e8",
+        "ChsBkdPrt": "",
+        "Annot": "A quiet, patient consolidation that prepares to double rooks or maneuver flexibly. Black pins the bishop along the e-file in search of last-ditch counterplay.",
+        "AdAnnot": "",
+        "RtfAnnot": ""
+      },
+      {
+        "Id": 3,
+        "MoveNo": "37",
+        "Wh": "g1-h2",
+        "Bl": "e6-d5",
+        "ChsBkdPrt": "",
+        "Annot": "Stepping off the long diagonal to eliminate any tactical pins and safeguard the king completely. Black pins White's bishop against the queen, hoping for a tactical reprieve.",
+        "AdAnnot": "",
+        "RtfAnnot": ""
+      },
+      {
+        "Id": 3,
+        "MoveNo": "38",
+        "Wh": "e4-f5",
+        "Bl": "d5-e6",
+        "ChsBkdPrt": "",
+        "Annot": "A stinging check that compels Black's bishop to retreat into another pin. Black must block, but his defensive resources are now entirely exhausted.",
+        "AdAnnot": "",
+        "RtfAnnot": ""
+      },
+      {
+        "Id": 3,
+        "MoveNo": "39",
+        "Wh": "f5-d3",
+        "Bl": "c4-a4",
+        "ChsBkdPrt": "",
+        "Annot": "The bishop retreats to attack the enemy queen, relentlessly driving her away from the central action. The queen is forced to the edge of the board, leaving her king utterly defenseless.",
+        "AdAnnot": "",
+        "RtfAnnot": ""
+      },
+      {
+        "Id": 3,
+        "MoveNo": "40",
+        "Wh": "d4-e5",
+        "Bl": "d6-d5",
+        "ChsBkdPrt": "",
+        "Annot": "Carlsen unmasks the d-file, weaving an inescapable web of discovered checks around the black monarch. The rook desperately interposes, but the king cannot survive the converging fire.",
+        "AdAnnot": "",
+        "RtfAnnot": ""
+      },
+      {
+        "Id": 3,
+        "MoveNo": "41",
+        "Wh": "e3-a7",
+        "Bl": "",
+        "ChsBkdPrt": "",
+        "Annot": "The crowning blow, penetrating with decisive checkmate threats and forcing Black's immediate capitulation.",
         "AdAnnot": "",
         "RtfAnnot": ""
       }
