@@ -1687,7 +1687,7 @@ export default function ChessLedger() {
                     FILES.map((f) => {
                       const sq = f + r;
                       const piece = setupSquares[sq];
-                      const light = (fileIdx(sq) + r) % 2 === 1;
+                      const light = (fileIdx(sq) + r) % 2 === 0;
                       return (
                         <div
                           key={sq}
