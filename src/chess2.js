@@ -1392,7 +1392,7 @@ export default function ChessLedger() {
                 FILES.map((f, fi) => {
                   const sq = f + r;
                   const piece = board[sq];
-                  const light = (fileIdx(sq) + r) % 2 === 1;
+                  const light = (fileIdx(sq) + r) % 2 === 0;
 
                   // Check if this square is the departure or arrival square
                   const isFrom = flash && flash.fromSquares?.includes(sq);
