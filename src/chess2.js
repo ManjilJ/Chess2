@@ -249,30 +249,41 @@ function parseMove(str, board, color) {
       return {
         from, to, pieceType: "k", pieceColor: color,
         isEnPassant: false, epSquare: null, isCastle: "K",
-        rookFrom: "h1", rookTo: "f1", promotion: null, notationOverride: "O-O"
+        rookFrom: "h1", rookTo: "f1", promotion: null, notationOverride: "O-O", captured: null
       };
     }
     if (from === "e1" && to === "c1") {
       return {
         from, to, pieceType: "k", pieceColor: color,
         isEnPassant: false, epSquare: null, isCastle: "Q",
-        rookFrom: "a1", rookTo: "d1", promotion: null, notationOverride: "O-O-O"
+        rookFrom: "a1", rookTo: "d1", promotion: null, notationOverride: "O-O-O", captured: null
       };
     }
     if (from === "e8" && to === "g8") {
       return {
         from, to, pieceType: "k", pieceColor: color,
         isEnPassant: false, epSquare: null, isCastle: "K",
-        rookFrom: "h8", rookTo: "f8", promotion: null, notationOverride: "O-O"
+        rookFrom: "h8", rookTo: "f8", promotion: null, notationOverride: "O-O", captured: null
       };
     }
     if (from === "e8" && to === "c8") {
       return {
         from, to, pieceType: "k", pieceColor: color,
         isEnPassant: false, epSquare: null, isCastle: "Q",
-        rookFrom: "a8", rookTo: "d8", promotion: null, notationOverride: "O-O-O"
+        rookFrom: "a8", rookTo: "d8", promotion: null, notationOverride: "O-O-O", captured: null
       };
     }
+  }
+
+  // Look up what's actually being captured, if anything — needed so
+  // replayed/loaded games also show the capture-ghost afterimage, the
+  // same way live moves already do via tryMove()'s `captured: targetPiece`.
+  let captured = null;
+  if (isEnPassant) {
+    const takenPawn = board[to[0] + from[1]];
+    if (takenPawn) captured = { type: takenPawn.type, color: takenPawn.color };
+  } else if (board[to]) {
+    captured = { type: board[to].type, color: board[to].color };
   }
 
   return {
@@ -287,6 +298,7 @@ function parseMove(str, board, color) {
     rookTo: null,
     promotion,
     notationOverride: raw,
+    captured,
   };
 }
 
@@ -478,7 +490,23 @@ export default function ChessLedger() {
       ...getPathSquares(ply.rookFrom, ply.rookTo)
     ];
 
-    setFlash({ fromSquares, toSquares, pathSquares, id: Math.random() });
+    // Remember which piece is leaving which square, so the vacated square
+    // can briefly show a fading "afterimage" of it — the board state has
+    // already moved the real piece to its destination by this point, so
+    // without this we'd have no idea what used to sit here.
+    const ghosts = [{ sq: ply.from, type: ply.pieceType, color: ply.pieceColor }];
+    if (ply.rookFrom) ghosts.push({ sq: ply.rookFrom, type: "r", color: ply.pieceColor });
+
+
+    // Piece that was just captured, if any — floats above the square and
+    // fades away, since a real piece is now sitting on that same square
+    // (or, for en passant, the square is a different one than "to").
+    const captureSq = ply.isEnPassant ? ply.epSquare : (ply.captured ? ply.to : null);
+    const captureGhost = ply.captured && captureSq
+      ? { sq: captureSq, type: ply.captured.type, color: ply.captured.color }
+      : null;
+
+    setFlash({ fromSquares, toSquares, pathSquares, ghosts, captureGhost, id: Math.random() });
     // Intentionally no auto-clear timeout: the from/to highlight is meant to
     // persist (at reduced, "settled" opacity once its entry animation ends)
     // until the *next* move overwrites it, so it's always visible which
@@ -1125,9 +1153,9 @@ export default function ChessLedger() {
 }
 
 
-        .board-square.flash { animation: flashPulse ${FLASH_MS}ms ease; }
+.board-square.flash { animation: flashPulse ${FLASH_MS}ms ease; }
 
-        .floating-thinking-badge {
+.floating-thinking-badge {
   position: fixed;
   top: 20px;
   left: 50%;
@@ -1237,6 +1265,45 @@ export default function ChessLedger() {
   0%   { box-shadow: inset 0 0 0 999px rgba(41, 188, 36, 0.9); }
   25%  { box-shadow: inset 0 0 0 999px rgba(255, 233, 110, 0.75); }
   100% { box-shadow: inset 0 0 0 999px rgba(223, 31, 14, 0.38); }
+}
+
+@keyframes pieceSettle {
+  0%   { opacity: 0.18; }
+  100% { opacity: 1; }
+}
+.piece-disc.piece-settle {
+  animation: pieceSettle 480ms ease-out;
+}
+
+
+@keyframes ghostFade {
+  0%   { opacity: 0.55; }
+  100% { opacity: 0; }
+}
+.ghost-piece {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  animation: ghostFade 2650ms ease-out forwards;
+}
+
+@keyframes captureFade {
+  0%   { opacity: 0.9; transform: translate(0%, -50%)  rotate(40deg)  scale(1.1); }
+  100% { opacity: 0;   transform: translate(55%, -120%) rotate(28deg) scale(1.1); }
+}
+.capture-ghost {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 30px;
+  pointer-events: none;
+  z-index: 6;
+  animation: captureFade 3900ms ease-out forwards;
 }
 
 /* 2. Destination / Settled square color — likewise settles to a persistent
@@ -1398,6 +1465,11 @@ export default function ChessLedger() {
                   const isFrom = flash && flash.fromSquares?.includes(sq);
                   const isTo = flash && flash.toSquares?.includes(sq);
                   const isPath = flash && flash.pathSquares?.includes(sq);
+                  // The piece that just vacated this square, if any — used
+                  // to draw a fading afterimage where it used to be. Only
+                  // relevant when the square is now empty; a real piece
+                  // (below) always takes visual priority.
+                  const ghost = !piece && flash && flash.ghosts?.find((g) => g.sq === sq);
 
                   return (
                     <div
@@ -1409,13 +1481,27 @@ export default function ChessLedger() {
                     >                      {fi === 0 && <span className="coord-rank">{r}</span>}
                       {r === 1 && <span className="coord-file">{f}</span>}
                       {piece && (
-                        <div className={`piece-disc ${piece.color === "w" ? "white-disc" : "black-disc"}`}>
+                        <div className={`piece-disc ${piece.color === "w" ? "white-disc" : "black-disc"} ${isTo ? "piece-settle" : ""}`}>
                           <span
                             draggable={mode === "freeplay" && atEnd && piece.color === turn && !pendingMove}
                             onDragStart={() => setDragSq(sq)}
                             className={piece.color === "w" ? "white-piece" : "black-piece"}
                           >
                             {GLYPH[piece.color][piece.type]}
+                          </span>
+                        </div>
+                      )}
+                      {ghost && (
+                        <div className="ghost-piece">
+                          <span className={ghost.color === "w" ? "white-piece" : "black-piece"}>
+                            {GLYPH[ghost.color][ghost.type]}
+                          </span>
+                        </div>
+                      )}
+                      {flash?.captureGhost?.sq === sq && (
+                        <div className="capture-ghost">
+                          <span className={flash.captureGhost.color === "w" ? "white-piece" : "black-piece"}>
+                            {GLYPH[flash.captureGhost.color][flash.captureGhost.type]}
                           </span>
                         </div>
                       )}
