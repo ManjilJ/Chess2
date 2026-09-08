@@ -1234,7 +1234,7 @@
   {
     "chsGm": {
       "Id": 6,
-      "GName": "Grünfeld Defence / Russian Variation - Donald Byrne vs. Robert James Fischer, The Game of the Century",
+      "GName": "Grünfeld Defence, 5.Bf4 Variation (D92) - Donald Byrne vs. Robert James Fischer, 'The Game of the Century' (1956)",
       "PauseFor": 3333,
       "StrtPos": "",
       "Remind": ""
@@ -1290,7 +1290,7 @@
         "MoveNo": "6",
         "Wh": "d1-b3",
         "Bl": "d5xc4",
-        "Annot": "Applying immediate pressure to d5 and b7 with the Russian system setup. Black surrenders the central pawn to draw White's queen onto an exposed square and open lines for his minor pieces.",
+        "Annot": "Applying immediate pressure to d5 and b7 with an aggressive queen sortie. Black surrenders the central pawn to draw White's queen onto an exposed square and open lines for his minor pieces.",
         "AdAnnot": "",
         "RtfAnnot": ""
       },
@@ -1333,9 +1333,9 @@
       {
         "Id": 6,
         "MoveNo": "11",
-        "Wh": "c1-g5",
+        "Wh": "f4-g5",
         "Bl": "b6-a4",
-        "Annot": "White pins Black's knight to restrain counteraction, but ignores the developing tactical crisis. Fischer unleashes a brilliant deflection that tears into White's overextended queenside.",
+        "Annot": "White steps his bishop from f4 to g5 to restrain Black's knight, but overlooks the brewing tactical crisis. Fischer unleashes a brilliant deflection that tears into White's queenside.",
         "AdAnnot": "",
         "RtfAnnot": ""
       },
@@ -1344,7 +1344,7 @@
         "MoveNo": "12",
         "Wh": "c5-a3",
         "Bl": "a4xc3",
-        "Annot": "Refusing the poisoned knight to avoid devastating discovered attacks against the uncastled king. Fischer liquidates the defender of e4, shattering White's pawn structure in the process.",
+        "Annot": "Refusing the knight to avoid devastating discovered attacks against the uncastled king. Fischer liquidates the defender of e4, shattering White's pawn structure in the process.",
         "AdAnnot": "",
         "RtfAnnot": ""
       },
@@ -1353,7 +1353,7 @@
         "MoveNo": "13",
         "Wh": "b2xc3",
         "Bl": "f6xe4",
-        "Annot": "Byrne recaptures toward the center, but his queenside pawns are shattered and his king is stuck in the crossfire. Fischer snatches the central pawn, opening devastating central lines against White's monarch.",
+        "Annot": "Byrne recaptures toward the center, but his queenside pawns are shattered and his king is stuck in the crossfire. Fischer snatches the central pawn, opening central lines against White's monarch.",
         "AdAnnot": "",
         "RtfAnnot": ""
       },
@@ -1362,7 +1362,7 @@
         "MoveNo": "14",
         "Wh": "g5xe7",
         "Bl": "d8-b6",
-        "Annot": "White executes a fork against queen and rook, hoping material gains will offset his glaring lag in development. Fischer sidesteps the threat by swinging the queen into action, activating the battery on the half-open b-file.",
+        "Annot": "White executes a fork against queen and rook, hoping material gains will offset his lag in development. Fischer sidesteps the threat by swinging the queen into action on the half-open b-file.",
         "AdAnnot": "",
         "RtfAnnot": ""
       },
@@ -1388,8 +1388,8 @@
         "Id": 6,
         "MoveNo": "17",
         "Wh": "e1-f1",
-        "Bl": "c8-e6",
-        "Annot": "Forfeiting castling is White's only retreat, leaving his king stranded without coordination. Fischer uncorks one of the most stunning queen sacrifices in history, offering his queen to orchestrate an unstoppable mating net.",
+        "Bl": "g4-e6",
+        "Annot": "Forfeiting castling is White's only retreat. Fischer uncorks one of the most stunning queen sacrifices in history, swinging his bishop from g4 to e6 to orchestrate an unstoppable mating net.",
         "AdAnnot": "",
         "RtfAnnot": ""
       },
@@ -1416,7 +1416,7 @@
         "MoveNo": "20",
         "Wh": "g1-f1",
         "Bl": "e2xd4+",
-        "Annot": "The king is forced back into the line of fire. The discovered check sweeps up a central pawn while unleashing the full wrath of the g7-bishop along the grand diagonal.",
+        "Annot": "The king is forced back into the line of fire. The discovered check from the c4-bishop sweeps up the d4 pawn while reactivating Black's pieces across the center.",
         "AdAnnot": "",
         "RtfAnnot": ""
       },
@@ -1434,7 +1434,7 @@
         "MoveNo": "22",
         "Wh": "g1-f1",
         "Bl": "e2-c3+",
-        "Annot": "The king shuttles helplessly between g1 and f1. Fischer uncovers another check, this time aiming directly at the pinned d1-rook.",
+        "Annot": "The king shuttles helplessly between g1 and f1. Fischer uncovers another check from the c4-bishop, this time setting his sights on the pinned d1-rook.",
         "AdAnnot": "",
         "RtfAnnot": ""
       },
