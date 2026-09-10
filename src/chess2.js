@@ -1218,6 +1218,13 @@ export default function ChessLedger() {
   color: #fff;
   border: 1px solid #d9363e;
 }
+@keyframes kingCheckGlow {
+  0%, 100% { box-shadow: inset 0 0 0 999px rgba(220, 20, 20, 0.35), 0 0 14px 4px rgba(220, 20, 20, 0.55); }
+  50%      { box-shadow: inset 0 0 0 999px rgba(220, 20, 20, 0.6),  0 0 22px 8px rgba(220, 20, 20, 0.85); }
+}
+.board-square.king-in-check {
+  animation: kingCheckGlow 1s ease-in-out infinite;
+}  
 .board-status-alert.checkmate {
   background: var(--oxblood);
   color: #fff;
@@ -1470,12 +1477,14 @@ export default function ChessLedger() {
                   // relevant when the square is now empty; a real piece
                   // (below) always takes visual priority.
                   const ghost = !piece && flash && flash.ghosts?.find((g) => g.sq === sq);
-
+                  const isCheckedKing =
+                    piece && piece.type === "k" &&
+                    (gameStatus?.type === "check" || gameStatus?.type === "checkmate") &&
+                    piece.color === gameStatus.checkedColor;
                   return (
                     <div
                       key={sq + (isFrom || isTo || isPath ? flash.id : "")}
-                      className={`board-square ${light ? "light" : "dark"} ${selected === sq ? "selected" : ""} ${isFrom ? "flash-from" : ""} ${isTo ? "flash-to" : ""} ${isPath ? "flash-path" : ""}`}
-                      onClick={() => pickSquare(sq)}
+                      className={`board-square ${light ? "light" : "dark"} ${selected === sq ? "selected" : ""} ${isFrom ? "flash-from" : ""} ${isTo ? "flash-to" : ""} ${isPath ? "flash-path" : ""} ${isCheckedKing ? "king-in-check" : ""}`} onClick={() => pickSquare(sq)}
                       onDragOver={(e) => e.preventDefault()}
                       onDrop={() => onDrop(sq)}
                     >                      {fi === 0 && <span className="coord-rank">{r}</span>}

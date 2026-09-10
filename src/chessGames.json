@@ -1792,5 +1792,450 @@
         "RtfAnnot": ""
       }
     ]
+  },
+  {
+    "chsGm": {
+      "Id": 8,
+      "GName": "Evans Gambit / Anderssen vs. Dufresne / The Evergreen Game",
+      "PauseFor": 3333,
+      "StrtPos": "",
+      "Remind": ""
+    },
+    "moves": [
+      {
+        "Id": 8,
+        "MoveNo": "1",
+        "Wh": "e2-e4",
+        "Bl": "e7-e5",
+        "Annot": "White seizes central territory and opens essential highways for his queen and bishop. Black matches the stake in the center, preventing White from establishing an uncontested pawn duo.",
+        "AdAnnot": "",
+        "RtfAnnot": ""
+      },
+      {
+        "Id": 8,
+        "MoveNo": "2",
+        "Wh": "g1-f3",
+        "Bl": "b8-c6",
+        "Annot": "White develops a knight toward the center with an attack against the undefended e-pawn. Black develops purposefully to defend the pawn while staking his own claim over key central squares.",
+        "AdAnnot": "",
+        "RtfAnnot": ""
+      },
+      {
+        "Id": 8,
+        "MoveNo": "3",
+        "Wh": "f1-c4",
+        "Bl": "f8-c5",
+        "Annot": "Entering the Italian Game, White trains his light-squared bishop directly on Black most vulnerable target, the f7-square. Black develops symmetrically to contest the central diagonals and maintain harmonious piece coordination.",
+        "AdAnnot": "",
+        "RtfAnnot": ""
+      },
+      {
+        "Id": 8,
+        "MoveNo": "4",
+        "Wh": "b2-b4",
+        "Bl": "c5xb4",
+        "Annot": "Anderssen unleashes the romantic Evans Gambit, offering a flank pawn to divert Black bishop and seize control of the center. Black accepts the challenge, winning material but granting White crucial time for rapid development.",
+        "AdAnnot": "",
+        "RtfAnnot": ""
+      },
+      {
+        "Id": 8,
+        "MoveNo": "5",
+        "Wh": "c2-c3",
+        "Bl": "b4-a5",
+        "Annot": "White gains a tempo against the bishop to prepare an imposing classical pawn center with d2-d4. Black retreats the bishop along the diagonal to keep pressure against White future center while avoiding further harassments.",
+        "AdAnnot": "",
+        "RtfAnnot": ""
+      },
+      {
+        "Id": 8,
+        "MoveNo": "6",
+        "Wh": "d2-d4",
+        "Bl": "e5xd4",
+        "Annot": "White strikes directly at the center to rip open files for his pieces before Black can consolidate. Black captures to relieve the central tension, though opening lines inevitably benefits the better-developed player.",
+        "AdAnnot": "",
+        "RtfAnnot": ""
+      },
+      {
+        "Id": 8,
+        "MoveNo": "7",
+        "Wh": "e1-g1",
+        "Bl": "d4-d3",
+        "Annot": "White secures his king and activates the f1-rook without wasting time recapturing immediately on d4. Black cleverly pushes the pawn to clog White central advance and deny the c3-knight its natural development square.",
+        "AdAnnot": "",
+        "RtfAnnot": ""
+      },
+      {
+        "Id": 8,
+        "MoveNo": "8",
+        "Wh": "d1-b3",
+        "Bl": "d8-f6",
+        "Annot": "White creates an immediate battery against f7 while simultaneously eyeing the b7-pawn. Black develops the queen to parry the deadly assault on f7 and protect the uncastled king.",
+        "AdAnnot": "",
+        "RtfAnnot": ""
+      },
+      {
+        "Id": 8,
+        "MoveNo": "9",
+        "Wh": "e4-e5",
+        "Bl": "f6-g6",
+        "Annot": "A sharp pawn sacrifice designed to dislodge the black queen and pry open the critical central files. Black side-steps to g6, maintaining an eye on White kingside while declining the toxic pawn.",
+        "AdAnnot": "",
+        "RtfAnnot": ""
+      },
+      {
+        "Id": 8,
+        "MoveNo": "10",
+        "Wh": "f1-e1",
+        "Bl": "g8-e7",
+        "Annot": "White centralizes the rook on the half-open e-file to pin down Black central monarch. Black develops his king knight to prepare kingside castling and shore up his defensive ranks.",
+        "AdAnnot": "",
+        "RtfAnnot": ""
+      },
+      {
+        "Id": 8,
+        "MoveNo": "11",
+        "Wh": "c1-a3",
+        "Bl": "b7-b5",
+        "Annot": "White deploys the dark-squared bishop to a domineering diagonal, completely paralyzing Black ability to castle safely. Black offers a spirited counter-sacrifice on the wing to deflect White attacking forces and generate counterplay.",
+        "AdAnnot": "",
+        "RtfAnnot": ""
+      },
+      {
+        "Id": 8,
+        "MoveNo": "12",
+        "Wh": "b3xb5",
+        "Bl": "a8-b8",
+        "Annot": "White snaps up the offered pawn while keeping the queen actively placed. Black seizes the newly opened b-file with tempo, driving White queen to an awkward square.",
+        "AdAnnot": "",
+        "RtfAnnot": ""
+      },
+      {
+        "Id": 8,
+        "MoveNo": "13",
+        "Wh": "b5-a4",
+        "Bl": "a5-b6",
+        "Annot": "White retreats the queen to safety while maintaining an x-ray pin against the knight on e7. Black preserves his valuable bishop and repositions it onto an active attacking diagonal aiming at White king.",
+        "AdAnnot": "",
+        "RtfAnnot": ""
+      },
+      {
+        "Id": 8,
+        "MoveNo": "14",
+        "Wh": "b1-d2",
+        "Bl": "c8-b7",
+        "Annot": "White develops his final minor piece toward the center to support the oncoming kingside assault. Black places his bishop on the long diagonal, directing lethal energy toward the white king position.",
+        "AdAnnot": "",
+        "RtfAnnot": ""
+      },
+      {
+        "Id": 8,
+        "MoveNo": "15",
+        "Wh": "d2-e4",
+        "Bl": "g6-f5",
+        "Annot": "White centralizes the knight with tremendous authority, eyeing key invasion squares around the black king. Black repositions the queen to increase kingside pressure and sidestep prospective tactical traps.",
+        "AdAnnot": "",
+        "RtfAnnot": ""
+      },
+      {
+        "Id": 8,
+        "MoveNo": "16",
+        "Wh": "c4xd3",
+        "Bl": "f5-h5",
+        "Annot": "White recaptures the pawn with tempo, threatening a deadly discovered attack against the black queen. Black scurries to h5 to avoid catastrophe and maintain mating threats along the g-file.",
+        "AdAnnot": "",
+        "RtfAnnot": ""
+      },
+      {
+        "Id": 8,
+        "MoveNo": "17",
+        "Wh": "e4-f6+",
+        "Bl": "g7xf6",
+        "Annot": "Anderssen detonates a brilliant piece sacrifice to blast open lines directly to Black uncastled king. Black is compelled to capture the audacious knight, fatally tearing open his own pawn shield.",
+        "AdAnnot": "",
+        "RtfAnnot": ""
+      },
+      {
+        "Id": 8,
+        "MoveNo": "18",
+        "Wh": "e5xf6",
+        "Bl": "h8-g8",
+        "Annot": "White recovers material while pinning Black remaining knight against the helpless monarch. Black ignores the pin and counter-attacks down the open g-file, threatening immediate checkmate on g2.",
+        "AdAnnot": "",
+        "RtfAnnot": ""
+      },
+      {
+        "Id": 8,
+        "MoveNo": "19",
+        "Wh": "a1-d1",
+        "Bl": "h5xf3",
+        "Annot": "White coolly centralizes his last reserve rook to construct a hidden mating web, completely unperturbed by Black threats. Black captures the knight and threatens unstoppable mate on g2 or f2, believing the day is won.",
+        "AdAnnot": "",
+        "RtfAnnot": ""
+      },
+      {
+        "Id": 8,
+        "MoveNo": "20",
+        "Wh": "e1xe7+",
+        "Bl": "c6xe7",
+        "Annot": "Anderssen unleashes an astonishing rook deflection to tear away the final barricades guarding the black king. Black recaptures with the knight, unaware that he has been lured into a forced mating net.",
+        "AdAnnot": "",
+        "RtfAnnot": ""
+      },
+      {
+        "Id": 8,
+        "MoveNo": "21",
+        "Wh": "a4xd7+",
+        "Bl": "e8xd7",
+        "Annot": "A magnificent queen sacrifice that wrenches the black monarch into the open center. Black must take the queen, sealing his fate against White harmoniously coordinated minor pieces.",
+        "AdAnnot": "",
+        "RtfAnnot": ""
+      },
+      {
+        "Id": 8,
+        "MoveNo": "22",
+        "Wh": "d3-f5+",
+        "Bl": "d7-e8",
+        "Annot": "White uncorks a lethal double check from bishop and rook, depriving the black king of any respite. Black is driven back to e8, as stepping into the open c-file leads to immediate checkmate on d7.",
+        "AdAnnot": "",
+        "RtfAnnot": ""
+      },
+      {
+        "Id": 8,
+        "MoveNo": "23",
+        "Wh": "f5-d7+",
+        "Bl": "e8-f8",
+        "Annot": "White checks again to force the king into the corner square where White dark-squared bishop awaits. Black is forced to the f8-square, powerless against the closing vice.",
+        "AdAnnot": "",
+        "RtfAnnot": ""
+      },
+      {
+        "Id": 8,
+        "MoveNo": "24",
+        "Wh": "a3xe7#",
+        "Bl": "",
+        "Annot": "White delivers pure aesthetic checkmate with the dark-squared bishop, capping an evergreen masterpiece of romantic combinative genius.",
+        "AdAnnot": "",
+        "RtfAnnot": ""
+      }
+    ]
+  },
+  {
+    "chsGm": {
+      "Id": 9,
+      "GName": "French Defense / Levitsky vs. Marshall / The Gold Coins Game",
+      "PauseFor": 3333,
+      "StrtPos": "",
+      "Remind": ""
+    },
+    "moves": [
+      {
+        "Id": 9,
+        "MoveNo": "1",
+        "Wh": "d2-d4",
+        "Bl": "e7-e6",
+        "Annot": "White stakes a claim in the center and opens lines for his dark-squared bishop. Black adopts a flexible stance, preparing to challenge White central pawn duo on the very next move.",
+        "AdAnnot": "",
+        "RtfAnnot": ""
+      },
+      {
+        "Id": 9,
+        "MoveNo": "2",
+        "Wh": "e2-e4",
+        "Bl": "d7-d5",
+        "Annot": "White gladly establishes the ideal classical pawn center across the fourth rank. Black strikes immediately at White center, steering the game into French Defense territory.",
+        "AdAnnot": "",
+        "RtfAnnot": ""
+      },
+      {
+        "Id": 9,
+        "MoveNo": "3",
+        "Wh": "b1-c3",
+        "Bl": "c7-c5",
+        "Annot": "White develops his queen knight to safeguard the attacked e4-pawn. Marshall launches an aggressive Tarrasch-style counter-thrust, directly challenging White central foundation.",
+        "AdAnnot": "",
+        "RtfAnnot": ""
+      },
+      {
+        "Id": 9,
+        "MoveNo": "4",
+        "Wh": "g1-f3",
+        "Bl": "b8-c6",
+        "Annot": "White brings another piece toward the center to reinforce control over the critical d4-square. Black develops symmetrically, piling additional pressure onto White central outpost.",
+        "AdAnnot": "",
+        "RtfAnnot": ""
+      },
+      {
+        "Id": 9,
+        "MoveNo": "5",
+        "Wh": "e4xd5",
+        "Bl": "e6xd5",
+        "Annot": "White resolves the central tension to saddle Black with an isolated queen pawn. Black recaptures toward the center, welcoming the open lines and dynamic piece activity that compensate for the structural weakness.",
+        "AdAnnot": "",
+        "RtfAnnot": ""
+      },
+      {
+        "Id": 9,
+        "MoveNo": "6",
+        "Wh": "f1-e2",
+        "Bl": "g8-f6",
+        "Annot": "White selects modest development to ensure rapid kingside castling without taking undue risks. Black develops his king knight to its most harmonious post, securing an active grasp over the center.",
+        "AdAnnot": "",
+        "RtfAnnot": ""
+      },
+      {
+        "Id": 9,
+        "MoveNo": "7",
+        "Wh": "e1-g1",
+        "Bl": "f8-e7",
+        "Annot": "White brings his king to safety and readies his heavy pieces for central deployment. Black unhurriedly develops his light-squared bishop to prepare for his own kingside castling.",
+        "AdAnnot": "",
+        "RtfAnnot": ""
+      },
+      {
+        "Id": 9,
+        "MoveNo": "8",
+        "Wh": "c1-g5",
+        "Bl": "e8-g8",
+        "Annot": "White pins the knight to exert indirect pressure against the isolated d5-pawn. Black calmly tucks his monarch away to safety, entirely unfazed by White pin.",
+        "AdAnnot": "",
+        "RtfAnnot": ""
+      },
+      {
+        "Id": 9,
+        "MoveNo": "9",
+        "Wh": "d4xc5",
+        "Bl": "c8-e6",
+        "Annot": "White surrenders his central pawn to isolate the d5-point and create targets for his pieces. Marshall prudently develops his queen bishop to solidify d5 before recapturing the gambited c5-pawn.",
+        "AdAnnot": "",
+        "RtfAnnot": ""
+      },
+      {
+        "Id": 9,
+        "MoveNo": "10",
+        "Wh": "f3-d4",
+        "Bl": "e7xc5",
+        "Annot": "White establishes an ideal blockading knight directly in front of the isolated pawn. Black recaptures with tempo, activating the dark-squared bishop along a menacing diagonal pointed at White king.",
+        "AdAnnot": "",
+        "RtfAnnot": ""
+      },
+      {
+        "Id": 9,
+        "MoveNo": "11",
+        "Wh": "d4xe6",
+        "Bl": "f7xe6",
+        "Annot": "White eliminates the active bishop and saddles Black with doubled central pawns. Black welcomes the exchange, as the open f-file infuses his heavy pieces with immense attacking dynamism.",
+        "AdAnnot": "",
+        "RtfAnnot": ""
+      },
+      {
+        "Id": 9,
+        "MoveNo": "12",
+        "Wh": "e2-g4",
+        "Bl": "d8-d6",
+        "Annot": "White targets the backward e6-pawn to force Black onto the defensive. Marshall coordinates queen and bishop purposefully, defending the weakness while training his guns on the white kingside.",
+        "AdAnnot": "",
+        "RtfAnnot": ""
+      },
+      {
+        "Id": 9,
+        "MoveNo": "13",
+        "Wh": "g4-h3",
+        "Bl": "a8-e8",
+        "Annot": "White retreats the bishop to safety while keeping up relentless pressure along the c8-h3 diagonal. Black mobilizes his last reserve rook to the e-file, turning the backward pawn into an unassailable bastion.",
+        "AdAnnot": "",
+        "RtfAnnot": ""
+      },
+      {
+        "Id": 9,
+        "MoveNo": "14",
+        "Wh": "d1-d2",
+        "Bl": "c5-b4",
+        "Annot": "White connects his rooks and prepares central coordination with Rad1. Marshall pins the c3-knight, intending to shatter White pawn structure and pave the way for a devastating leap into e4.",
+        "AdAnnot": "",
+        "RtfAnnot": ""
+      },
+      {
+        "Id": 9,
+        "MoveNo": "15",
+        "Wh": "g5xf6",
+        "Bl": "f8xf6",
+        "Annot": "White eliminates the threatening knight before it can jump into e4 with devastating effect. Black recaptures with the rook, doubling his firepower along the semi-open f-file against the fragile f2-square.",
+        "AdAnnot": "",
+        "RtfAnnot": ""
+      },
+      {
+        "Id": 9,
+        "MoveNo": "16",
+        "Wh": "a1-d1",
+        "Bl": "d6-c5",
+        "Annot": "White brings his final rook to the d-file to generate x-ray pressure through the pinned d5-pawn. Marshall centralizes his queen with venom, piling unbearable pressure onto the pinned c3-knight.",
+        "AdAnnot": "",
+        "RtfAnnot": ""
+      },
+      {
+        "Id": 9,
+        "MoveNo": "17",
+        "Wh": "d2-e2",
+        "Bl": "b4xc3",
+        "Annot": "White unpins his knight and sets up a latent tactical pin along the e-file against Black king. Marshall ruthlessly removes the knight, irreparably mangling White queenside pawn skeleton.",
+        "AdAnnot": "",
+        "RtfAnnot": ""
+      },
+      {
+        "Id": 9,
+        "MoveNo": "18",
+        "Wh": "b2xc3",
+        "Bl": "c5xc3",
+        "Annot": "White recaptures to avoid falling behind in material, accepting crippled doubled c-pawns. Marshall scoops up the loose pawn, restoring material parity while maintaining complete positional mastery.",
+        "AdAnnot": "",
+        "RtfAnnot": ""
+      },
+      {
+        "Id": 9,
+        "MoveNo": "19",
+        "Wh": "d1xd5",
+        "Bl": "c6-d4",
+        "Annot": "White exploits the absolute pin on the e-file to pick off the isolated pawn. Marshall unleashes a stunning intermediate jump, centralizing his knight with a direct attack against White queen.",
+        "AdAnnot": "",
+        "RtfAnnot": ""
+      },
+      {
+        "Id": 9,
+        "MoveNo": "20",
+        "Wh": "e2-h5",
+        "Bl": "e8-f8",
+        "Annot": "White dodges the knight and conjures an instantaneous back-rank mate threat. Marshall parries the danger by doubling rooks on the f-file, simultaneously unpinning his e-pawn and aiming directly at f2.",
+        "AdAnnot": "",
+        "RtfAnnot": ""
+      },
+      {
+        "Id": 9,
+        "MoveNo": "21",
+        "Wh": "d5-e5",
+        "Bl": "f6-h6",
+        "Annot": "White rushes his rook back to shore up the second rank and observe the centralized knight. Marshall drives the white queen from her active post by swinging his rook into kingside combat with tempo.",
+        "AdAnnot": "",
+        "RtfAnnot": ""
+      },
+      {
+        "Id": 9,
+        "MoveNo": "22",
+        "Wh": "h5-g5",
+        "Bl": "h6xh3",
+        "Annot": "White retreats his queen to maintain a semblance of defense around his king. Marshall shatters the protective shield with a brilliant exchange sacrifice, since capturing the rook walks into a fatal royal fork.",
+        "AdAnnot": "",
+        "RtfAnnot": ""
+      },
+      {
+        "Id": 9,
+        "MoveNo": "23",
+        "Wh": "e5-c5",
+        "Bl": "c3-g3",
+        "Annot": "White desperately counter-attacks the black queen in a futile effort to distract the attackers. Marshall drops the immortal queen sacrifice onto g3, placing his queen into three separate captures and forcing immediate capitulation.",
+        "AdAnnot": "",
+        "RtfAnnot": ""
+      }
+    ]
   }
 ]
