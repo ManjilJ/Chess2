@@ -24,6 +24,7 @@ const PROMO_CHOICES = [
 const DEFAULT_PAUSE_MS = 750;
 const FLASH_MS = 2550;
 const MAX_LOOPS = 250000;
+const FAST_FORWARD_MS = 250; // blitz-speed interval for the Fastmove button
 
 function parsePieceCode(code) {
   const str = code.trim().toLowerCase();
@@ -416,6 +417,7 @@ export default function ChessLedger() {
   const blinkRef = useRef(blink);
   const loopCountRef = useRef(0);
   const flashTimeoutRef = useRef(null);
+  const fastForwardTimerRef = useRef(null);
   const [vsComputer, setVsComputer] = useState(false);
   const [isThinking, setIsThinking] = useState(false);
 
@@ -640,7 +642,7 @@ export default function ChessLedger() {
   }, [running, pauseForActive]);
 
   useEffect(() => () => flashTimeoutRef.current && clearTimeout(flashTimeoutRef.current), []);
-
+  useEffect(() => () => fastForwardTimerRef.current && clearInterval(fastForwardTimerRef.current), []);
   /* --------------------------- move making (freeplay) ------------------ */
 
   function tryMove(fromSq, toSq) {
@@ -956,9 +958,26 @@ export default function ChessLedger() {
 
   function fastForward() {
     setRunning(false);
+    // Cancel any fast-forward already in flight rather than stacking two.
+    if (fastForwardTimerRef.current) {
+      clearInterval(fastForwardTimerRef.current);
+      fastForwardTimerRef.current = null;
+    }
+
     const n = Math.max(1, Number(fastN) || 1);
-    setPlyIndex(Math.min(plies.length, plyIndex + n));
+    const target = Math.min(plies.length, plyIndex + n);
+    let stepsLeft = target - plyIndex;
+    if (stepsLeft <= 0) return;
+
     setSelected(null);
+    fastForwardTimerRef.current = setInterval(() => {
+      advanceTick(); // same per-move step used by Run — flashes and advances one ply
+      stepsLeft -= 1;
+      if (stepsLeft <= 0) {
+        clearInterval(fastForwardTimerRef.current);
+        fastForwardTimerRef.current = null;
+      }
+    }, FAST_FORWARD_MS);
   }
 
   function setAnnot(moveNo, value) {
@@ -1556,7 +1575,7 @@ export default function ChessLedger() {
           <div className="btn-row">
             <button className="btn primary" onClick={() => setLibraryOpen(true)}>Load…</button>
             <button className="btn" onClick={newGame}>New Game</button>
-<button className="btn" onClick={() => setBoardFlipped((f) => !f)}>
+            <button className="btn" onClick={() => setBoardFlipped((f) => !f)}>
               {boardFlipped ? "🔃 Flip Board (Black bottom)" : "🔃 Flip Board (White bottom)"}
             </button>
             <button className="btn" onClick={openSetup}>Set Up Position…</button>
