@@ -404,6 +404,7 @@ export default function ChessLedger() {
   const [loop, setLoop] = useState(false);
   const [blink, setBlink] = useState(true);
   const [showCountdown, setShowCountdown] = useState(false);
+  const [boardFlipped, setBoardFlipped] = useState(false);
   const [msRemaining, setMsRemaining] = useState(0);
   const [fastN, setFastN] = useState(5);
   const [flash, setFlash] = useState(null);
@@ -1097,7 +1098,11 @@ export default function ChessLedger() {
 
   const countdownSeconds = Math.max(0, Math.ceil(msRemaining / 1000));
   const nextMover = turn === "w" ? "White" : "Black";
-
+  // Flipping only changes which square draws where in the grid — the
+  // square names (a1, e4, etc.) never change, so move logic, flash/ghost
+  // lookups, and drag/click handlers all keep working unmodified.
+  const displayRanks = boardFlipped ? [...RANKS].reverse() : RANKS;
+  const displayFiles = boardFlipped ? [...FILES].reverse() : FILES;
   return (
     <div className="ledger-root">
       <style>{`
@@ -1462,8 +1467,8 @@ export default function ChessLedger() {
           </div>
           <div className="board-wrap">
             <div className="board-grid">
-              {RANKS.map((r) =>
-                FILES.map((f, fi) => {
+              {displayRanks.map((r) =>
+                displayFiles.map((f, fi) => {
                   const sq = f + r;
                   const piece = board[sq];
                   const light = (fileIdx(sq) + r) % 2 === 0;
@@ -1488,7 +1493,7 @@ export default function ChessLedger() {
                       onDragOver={(e) => e.preventDefault()}
                       onDrop={() => onDrop(sq)}
                     >                      {fi === 0 && <span className="coord-rank">{r}</span>}
-                      {r === 1 && <span className="coord-file">{f}</span>}
+                      {r === displayRanks[displayRanks.length - 1] && <span className="coord-file">{f}</span>}
                       {piece && (
                         <div className={`piece-disc ${piece.color === "w" ? "white-disc" : "black-disc"} ${isTo ? "piece-settle" : ""}`}>
                           <span
@@ -1551,6 +1556,9 @@ export default function ChessLedger() {
           <div className="btn-row">
             <button className="btn primary" onClick={() => setLibraryOpen(true)}>Load…</button>
             <button className="btn" onClick={newGame}>New Game</button>
+<button className="btn" onClick={() => setBoardFlipped((f) => !f)}>
+              {boardFlipped ? "🔃 Flip Board (Black bottom)" : "🔃 Flip Board (White bottom)"}
+            </button>
             <button className="btn" onClick={openSetup}>Set Up Position…</button>
             <button
               className={`btn ${vsComputer ? "active" : ""}`}
