@@ -1248,7 +1248,11 @@ export default function ChessLedger() {
 }
 .board-square.king-in-check {
   animation: kingCheckGlow 1s ease-in-out infinite;
-}  
+}
+.piece-disc.king-tilted {
+  transform: rotate(90deg);
+} 
+
 .board-status-alert.checkmate {
   background: var(--oxblood);
   color: #fff;
@@ -1505,7 +1509,11 @@ export default function ChessLedger() {
                     piece && piece.type === "k" &&
                     (gameStatus?.type === "check" || gameStatus?.type === "checkmate") &&
                     piece.color === gameStatus.checkedColor;
-                  return (
+                  const isMatedKing =
+                    piece && piece.type === "k" &&
+                    gameStatus?.type === "checkmate" &&
+                    piece.color === gameStatus.checkedColor;
+                    return (
                     <div
                       key={sq + (isFrom || isTo || isPath ? flash.id : "")}
                       className={`board-square ${light ? "light" : "dark"} ${selected === sq ? "selected" : ""} ${isFrom ? "flash-from" : ""} ${isTo ? "flash-to" : ""} ${isPath ? "flash-path" : ""} ${isCheckedKing ? "king-in-check" : ""}`} onClick={() => pickSquare(sq)}
@@ -1513,8 +1521,8 @@ export default function ChessLedger() {
                       onDrop={() => onDrop(sq)}
                     >                      {fi === 0 && <span className="coord-rank">{r}</span>}
                       {r === displayRanks[displayRanks.length - 1] && <span className="coord-file">{f}</span>}
-                      {piece && (
-                        <div className={`piece-disc ${piece.color === "w" ? "white-disc" : "black-disc"} ${isTo ? "piece-settle" : ""}`}>
+{piece && (
+                        <div className={`piece-disc ${piece.color === "w" ? "white-disc" : "black-disc"} ${isTo ? "piece-settle" : ""} ${isMatedKing ? "king-tilted" : ""}`}>
                           <span
                             draggable={mode === "freeplay" && atEnd && piece.color === turn && !pendingMove}
                             onDragStart={() => setDragSq(sq)}
