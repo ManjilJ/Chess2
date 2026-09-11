@@ -21,7 +21,7 @@ const PROMO_CHOICES = [
   { type: "b", label: "Bishop" },
 ];
 
-const DEFAULT_PAUSE_MS = 750;
+const DEFAULT_PAUSE_MS = 1234;
 const FLASH_MS = 2550;
 const MAX_LOOPS = 250000;
 const FAST_FORWARD_MS = 250; // blitz-speed interval for the Fastmove button
@@ -405,6 +405,7 @@ export default function ChessLedger() {
   const [loop, setLoop] = useState(false);
   const [blink, setBlink] = useState(true);
   const [showCountdown, setShowCountdown] = useState(false);
+  const [autoScrollAnnot, setAutoScrollAnnot] = useState(false);
   const [boardFlipped, setBoardFlipped] = useState(false);
   const [msRemaining, setMsRemaining] = useState(0);
   const [fastN, setFastN] = useState(5);
@@ -415,6 +416,8 @@ export default function ChessLedger() {
   const plyIndexRef = useRef(plyIndex);
   const loopRef = useRef(loop);
   const blinkRef = useRef(blink);
+  const runningRef = useRef(false);
+  const annotationsRef = useRef(annotations);
   const loopCountRef = useRef(0);
   const flashTimeoutRef = useRef(null);
   const fastForwardTimerRef = useRef(null);
@@ -425,6 +428,8 @@ export default function ChessLedger() {
   useEffect(() => { plyIndexRef.current = plyIndex; }, [plyIndex]);
   useEffect(() => { loopRef.current = loop; }, [loop]);
   useEffect(() => { blinkRef.current = blink; }, [blink]);
+  useEffect(() => { runningRef.current = running; }, [running]);
+  useEffect(() => { annotationsRef.current = annotations; }, [annotations]);
 
   const activeStrtPos = activeGame ? activeGame.chsGm.StrtPos : customStrtPos;
   const activeStartColor = activeGame ? "w" : customStartColor;
@@ -456,10 +461,152 @@ export default function ChessLedger() {
     }
   }, [plyIndex, currentMoveNo]);
 
+
+
+  const animMapRef = useRef(new Map());
+  const activeMoveTaRef = useRef(null); // Slot 1: Current active move
+  const hoveredTaRef = useRef(null);    // Slot 2: Currently hovered move
+
+  function startPingPongScroll(el) {
+    if (!el || animMapRef.current.has(el)) return;
+
+    const maxScroll = el.scrollHeight - el.clientHeight;
+    if (maxScroll <= 2) return; // Don't scroll if not overflowing
+
+    let isRunning = true; //  stops the RAF loop permanently
+    let startTime = null;
+    let animId = null;
+    let isUserWheeling = false;
+    let wheelTimeout = null;
+
+    const pauseTopMs = 1400;
+    const pauseBottomMs = 1600;
+    const scrollSpeedPxPerSec = 7;
+    const scrollDurationMs = (maxScroll / scrollSpeedPxPerSec) * 1000;
+    const cycleDurationMs = pauseTopMs + scrollDurationMs + pauseBottomMs + scrollDurationMs;
+
+    function onWheel() {
+      isUserWheeling = true;
+      if (wheelTimeout) clearTimeout(wheelTimeout);
+
+      wheelTimeout = setTimeout(() => {
+        isUserWheeling = false;
+        const currentProgress = Math.min(1, Math.max(0, el.scrollTop / maxScroll));
+        const elapsed = pauseTopMs + currentProgress * scrollDurationMs;
+        startTime = performance.now() - elapsed;
+      }, 800);
+    }
+
+    el.addEventListener("wheel", onWheel, { passive: true });
+
+    function step(timestamp) {
+      if (!isRunning) return;
+
+      if (!startTime) startTime = timestamp;
+
+      if (!isUserWheeling) {
+        const elapsedInCycle = (timestamp - startTime) % cycleDurationMs;
+
+        if (elapsedInCycle < pauseTopMs) {
+          el.scrollTop = 0;
+        } else if (elapsedInCycle < pauseTopMs + scrollDurationMs) {
+          const progress = (elapsedInCycle - pauseTopMs) / scrollDurationMs;
+          el.scrollTop = progress * maxScroll;
+        } else if (elapsedInCycle < pauseTopMs + scrollDurationMs + pauseBottomMs) {
+          el.scrollTop = maxScroll;
+        } else {
+          const progress = (elapsedInCycle - (pauseTopMs + scrollDurationMs + pauseBottomMs)) / scrollDurationMs;
+          el.scrollTop = (1 - progress) * maxScroll;
+        }
+      }
+
+      if (isRunning) {
+        animId = requestAnimationFrame(step);
+      }
+    }
+
+    animId = requestAnimationFrame(step);
+
+    animMapRef.current.set(el, {
+      stop: () => {
+        isRunning = false; // Terminates step() immediately
+        cancelAnimationFrame(animId);
+        el.removeEventListener("wheel", onWheel);
+        if (wheelTimeout) clearTimeout(wheelTimeout);
+        el.scrollTop = 0;
+      },
+    });
+  }
+
+  function stopPingPongScroll(el) {
+    if (!el) return;
+    const entry = animMapRef.current.get(el);
+    if (entry) {
+      entry.stop();
+      animMapRef.current.delete(el);
+    }
+    el.scrollTop = 0;
+  }
+
+  // --- At most 1 hovered + 1 active ---
+  function handleAnnotMouseEnter(el) {
+    if (!autoScrollAnnot || !el) return;
+
+    // If another note was previously hovered, immediately stop it
+    if (hoveredTaRef.current && hoveredTaRef.current !== el) {
+      if (hoveredTaRef.current !== activeMoveTaRef.current) {
+        stopPingPongScroll(hoveredTaRef.current);
+      }
+    }
+
+    hoveredTaRef.current = el;
+    startPingPongScroll(el);
+  }
+
+  function handleAnnotMouseLeave(el) {
+    if (hoveredTaRef.current === el) {
+      hoveredTaRef.current = null;
+    }
+    // Only stop if it's not the active current move
+    if (el !== activeMoveTaRef.current) {
+      stopPingPongScroll(el);
+    }
+  }
+
+  // Auto-scroll ONLY current move continuously
+  useEffect(() => {
+    if (!autoScrollAnnot) {
+      animMapRef.current.forEach((entry) => entry.stop());
+      animMapRef.current.clear();
+      activeMoveTaRef.current = null;
+      hoveredTaRef.current = null;
+      return;
+    }
+
+    // Stop old active move if not hovered
+    if (activeMoveTaRef.current && activeMoveTaRef.current !== hoveredTaRef.current) {
+      stopPingPongScroll(activeMoveTaRef.current);
+    }
+
+    if (!currentMoveNo || currentMoveNo < 1) {
+      activeMoveTaRef.current = null;
+      return;
+    }
+
+    const currTa = document.querySelector(`textarea[data-annot-moveno="${currentMoveNo}"]`);
+    activeMoveTaRef.current = currTa;
+    if (currTa) {
+      startPingPongScroll(currTa);
+    }
+
+    return () => {
+      animMapRef.current.forEach((entry) => entry.stop());
+      animMapRef.current.clear();
+    };
+  }, [currentMoveNo, autoScrollAnnot]);
   const atEnd = plyIndex === plies.length;
   const atStart = plyIndex === 0;
-  // const pauseForActive = activeGame ? activeGame.chsGm.PauseFor : gameMeta.pauseFor || DEFAULT_PAUSE_MS;
-  const pauseForActive = Math.min(25555, Math.max(1234, Number(gameMeta.pauseFor) || 1234));
+  const pauseForActive = Math.min(60000, Math.max(1234, Number(gameMeta.pauseFor) || 1234));
   function getPathSquares(from, to) {
     if (!from || !to) return [];
     const f1 = FILES.indexOf(from[0]), r1 = parseInt(from[1], 10);
@@ -567,8 +714,6 @@ export default function ChessLedger() {
           notationOverride: best.san,
         };
 
-        // finalize() now handles flashing the move itself, so no need to
-        // call flashMove() separately here.
         finalize(ply);
       }
       setIsThinking(false);
@@ -612,6 +757,13 @@ export default function ChessLedger() {
     if (curIndex < curPlies.length) {
       const ply = curPlies[curIndex];
       if (blinkRef.current) flashMove(ply);
+
+      // if (curIndex > 0 && curIndex % 2 === 0 && runningRef.current) {
+      //   const finishedMoveNo = curIndex / 2;
+      //   const finished = annotationsRef.current[finishedMoveNo];
+      //   const text = finished?.adAnnot || finished?.annot || "";
+      // }
+
       setPlyIndex(curIndex + 1);
     } else if (loopRef.current && loopCountRef.current < MAX_LOOPS) {
       loopCountRef.current += 1;
@@ -627,11 +779,28 @@ export default function ChessLedger() {
   useEffect(() => {
     if (!running) return;
     const stepMs = 100;
+    const CLOSURE_EXTRA_MS = 11000; // extra dwell time on the game's final
+    // recorded position — checkmate, resignation, or wherever the moves
+    // simply end — before a loop resets to move 0 or a non-looping Run
+    // stops.
     let remaining = pauseForActive;
+    let closureApplied = false; // ensures the extra pause fires once per arrival
     setMsRemaining(remaining);
     const id = setInterval(() => {
       remaining -= stepMs;
       if (remaining <= 0) {
+        const atFinalPosition =
+          pliesRef.current.length > 0 &&
+          plyIndexRef.current === pliesRef.current.length;
+
+        if (atFinalPosition && !closureApplied) {
+          closureApplied = true;
+          remaining = CLOSURE_EXTRA_MS;
+          setMsRemaining(remaining);
+          return; // hold here; don't advance/loop/stop yet
+        }
+
+        closureApplied = false;
         advanceTick();
         remaining = pauseForActive;
       }
@@ -640,7 +809,6 @@ export default function ChessLedger() {
     return () => clearInterval(id);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [running, pauseForActive]);
-
   useEffect(() => () => flashTimeoutRef.current && clearTimeout(flashTimeoutRef.current), []);
   useEffect(() => () => fastForwardTimerRef.current && clearInterval(fastForwardTimerRef.current), []);
   /* --------------------------- move making (freeplay) ------------------ */
@@ -818,7 +986,24 @@ export default function ChessLedger() {
   }
 
   /* --------------------------- position setup / board editor ------------ */
+  function handlePauseForDoubleClick(e) {
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+    const current = Number(gameMeta.pauseFor) || 1234;
+    let next;
+    if (current >= 60000) {
+      next = 1234; // Reset to min if at or above 60s
+    } else {
+      next = Math.min(60000, Math.max(1234, current * 2));
+    }
 
+    setGameMeta((prev) => ({ ...prev, pauseFor: next }));
+    if (activeGame) {
+      setActiveGame((prev) => (prev ? { ...prev, chsGm: { ...prev.chsGm, PauseFor: next } } : null));
+    }
+  }
   function openSetup() {
     // Seed the editor with the current freeplay board if there is one in
     // progress, otherwise the standard starting arrangement.
@@ -907,7 +1092,7 @@ export default function ChessLedger() {
     setGameMeta({
       id: game.chsGm.Id,
       gName: game.chsGm.GName,
-      pauseFor: Math.min(25555, Math.max(1234, Number(game.chsGm.PauseFor) || 2222)),
+      pauseFor: Math.min(60000, Math.max(1234, Number(game.chsGm.PauseFor) || 2222)),
       remind: game.chsGm.Remind,
     });
     setLibraryOpen(false);
@@ -1087,7 +1272,7 @@ export default function ChessLedger() {
       chsGm: {
         Id: Date.now(),
         GName: autoTitle,
-        PauseFor: gameMeta.pauseFor || 750,
+        PauseFor: gameMeta.pauseFor || 1234,
         StrtPos: activeStrtPos || "",
         Remind: `Played vs Computer`,
       },
@@ -1124,7 +1309,7 @@ export default function ChessLedger() {
   const displayFiles = boardFlipped ? [...FILES].reverse() : FILES;
   return (
     <div className="ledger-root">
-      <style>{`
+<style>{`
         @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=JetBrains+Mono:wght@400;500;600&display=swap');
 
         .ledger-root {
@@ -1145,222 +1330,321 @@ export default function ChessLedger() {
           min-height: 100%;
           padding: 28px 20px 40px;
         }
+
         .ledger-title {
           font-family: 'Fraunces', Georgia, serif;
           font-weight: 700;
           font-size: 30px;
           letter-spacing: -0.01em;
         }
-        .ledger-sub { color: var(--ink-soft); font-size: 13px; letter-spacing: 0.03em; }
-        .ledger-layout { display: flex; gap: 28px; flex-wrap: wrap; align-items: flex-start; margin-top: 22px; }
+
+        .ledger-sub {
+          color: var(--ink-soft);
+          font-size: 13px;
+          letter-spacing: 0.03em;
+        }
+
+        .ledger-layout {
+          display: flex;
+          gap: 28px;
+          flex-wrap: wrap;
+          align-items: flex-start;
+          margin-top: 22px;
+        }
+
         .board-col {
           position: sticky;
           top: 20px;
           align-self: flex-start;
           z-index: 5;
         }
-        .board-wrap { background: var(--walnut-dark); padding: 16px; border-radius: 4px; box-shadow: 0 8px 24px rgba(0,0,0,0.25); }
-        .board-grid { display: grid; grid-template-columns: repeat(8, 52px); grid-template-rows: repeat(8, 52px); border: 3px solid var(--walnut); }
-        .board-square { position: relative; display: flex; align-items: center; justify-content: center; font-size: 34px; user-select: none; cursor: pointer; line-height: 1; }
-        .board-square.light { background: var(--light-sq); }
-        .board-square.dark { background: var(--dark-sq); }
-        .board-square.selected { outline: 3px solid var(--gold); outline-offset: -3px; }
 
-.board-square.flash-path { 
-  animation: slowFadePath 1500ms ease-out forwards; 
-}        
-.board-square.flash-from { 
-  animation: slowFadeFrom 1500ms ease-out forwards; 
-}
-.board-square.flash-to { 
-  animation: slowFadeTo 3500ms ease-out forwards; 
-}
-
-
-.board-square.flash { animation: flashPulse ${FLASH_MS}ms ease; }
-
-.floating-thinking-badge {
-  position: fixed;
-  top: 20px;
-  left: 50%;
-  transform: translateX(-50%);
-  background: var(--walnut-dark);
-  color: #fbf8f2;
-  border: 2px solid var(--gold);
-  border-radius: 999px;
-  padding: 8px 18px;
-  font-size: 13px;
-  font-weight: 600;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
-  z-index: 9999;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  pointer-events: none;
-  animation: slideDownFade 0.25s ease-out;
-}
-
-.status-pill {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  font-weight: 700;
-  font-size: 12px;
-  padding: 6px 14px;
-  border-radius: 999px;
-  animation: pulseBadge 1.2s infinite ease-in-out;
-}
-.status-pill.check {
-  background: #fff2f0;
-  color: var(--oxblood);
-  border: 1px solid var(--oxblood);
-}
-.status-pill.checkmate {
-  background: var(--oxblood);
-  color: #fff;
-  border: 1px solid var(--oxblood);
-}
-.status-pill.draw {
-  background: var(--walnut-dark);
-  color: var(--paper);
-  border: 1px solid var(--walnut);
-}
-
-.board-status-alert {
-  font-family: 'Fraunces', Georgia, serif;
-  font-weight: 700;
-  font-size: 14px;
-  text-align: center;
-  padding: 8px 12px;
-  border-radius: 4px;
-  margin-bottom: 8px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-  animation: slideInDown 0.3s ease-out;
-}
-.board-status-alert.check {
-  background: #ff4d4f;
-  color: #fff;
-  border: 1px solid #d9363e;
-}
-@keyframes kingCheckGlow {
-  0%, 100% { box-shadow: inset 0 0 0 999px rgba(220, 20, 20, 0.35), 0 0 14px 4px rgba(220, 20, 20, 0.55); }
-  50%      { box-shadow: inset 0 0 0 999px rgba(220, 20, 20, 0.6),  0 0 22px 8px rgba(220, 20, 20, 0.85); }
-}
-.board-square.king-in-check {
-  animation: kingCheckGlow 1s ease-in-out infinite;
-}
-.piece-disc.king-tilted {
-  transform: rotate(90deg);
-} 
-
-.board-status-alert.checkmate {
-  background: var(--oxblood);
-  color: #fff;
-  border: 1px solid #4a1515;
-  font-size: 15px;
-}
-.board-status-alert.draw {
-  background: var(--walnut-dark);
-  color: var(--paper);
-  border: 1px solid var(--walnut);
-}
-
-@keyframes slideInDown {
-  from { opacity: 0; transform: translateY(-8px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-
-@keyframes pulseBadge {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.04); }
-}
-
-@keyframes slideDownFade {
-  from {
-    opacity: 0;
-    transform: translate(-50%, -14px);
-  }
-  to {
-    opacity: 1;
-    transform: translate(-50%, 0);
-  }
-}
-/* 3. Trajectory / Path square color — this one is just a transient trail,
-   so it's fine for it to fade all the way out. */
-@keyframes slowFadePath {
-  0%   { box-shadow: inset 0 0 0 999px rgba(180, 160, 220, 0.65); }  /* change path color here */
-  25%  { box-shadow: inset 0 0 0 999px rgba(180, 160, 220, 0.45); }  /* change path color here */
-  100% { box-shadow: inset 0 0 0 999px rgba(180, 160, 220, 0); }
-}        
-
-/* 1. Departure square color — settles to a persistent tint (does NOT fade
-   to 0) so the last move's origin square stays identifiable until the
-   next move overwrites it. */
-@keyframes slowFadeFrom {
-  0%   { box-shadow: inset 0 0 0 999px rgba(41, 188, 36, 0.9); }
-  25%  { box-shadow: inset 0 0 0 999px rgba(255, 233, 110, 0.75); }
-  100% { box-shadow: inset 0 0 0 999px rgba(223, 31, 14, 0.38); }
-}
-
-@keyframes pieceSettle {
-  0%   { opacity: 0.18; }
-  100% { opacity: 1; }
-}
-.piece-disc.piece-settle {
-  animation: pieceSettle 480ms ease-out;
-}
-
-
-@keyframes ghostFade {
-  0%   { opacity: 0.55; }
-  100% { opacity: 0; }
-}
-.ghost-piece {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  pointer-events: none;
-  animation: ghostFade 2650ms ease-out forwards;
-}
-
-@keyframes captureFade {
-  0%   { opacity: 0.9; transform: translate(0%, -50%)  rotate(40deg)  scale(1.1); }
-  100% { opacity: 0;   transform: translate(55%, -120%) rotate(28deg) scale(1.1); }
-}
-.capture-ghost {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 30px;
-  pointer-events: none;
-  z-index: 6;
-  animation: captureFade 3900ms ease-out forwards;
-}
-
-/* 2. Destination / Settled square color — likewise settles to a persistent
-   tint instead of fading out completely. */
-@keyframes slowFadeTo {
-  0%   { box-shadow: inset 0 0 0 999px rgba(80, 140, 90, 0.9); }   /* change color here */
-  25%  { box-shadow: inset 0 0 0 999px rgba(80, 140, 90, 0.75); }  /* change color here */
-  100% { box-shadow: inset 0 0 0 999px rgba(80, 140, 90, 0.45); }
-}
-
-
-
-@keyframes pulseTo {
-  0%   { box-shadow: inset 0 0 0 999px rgba(176, 141, 87, 0.8); }
-  100% { box-shadow: inset 0 0 0 999px rgba(176, 141, 87, 0); }
-}        
-        
-        @keyframes flashPulse {
-          0% { box-shadow: inset 0 0 0 999px rgba(176,141,87,0); }
-          25% { box-shadow: inset 0 0 0 999px rgba(176,141,87,0.85); }
-          100% { box-shadow: inset 0 0 0 999px rgba(176,141,87,0); }
+        .board-wrap {
+          background: var(--walnut-dark);
+          padding: 16px;
+          border-radius: 4px;
+          box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
         }
+
+        .board-grid {
+          display: grid;
+          grid-template-columns: repeat(8, 52px);
+          grid-template-rows: repeat(8, 52px);
+          border: 3px solid var(--walnut);
+        }
+
+        .board-square {
+          position: relative;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 34px;
+          user-select: none;
+          cursor: pointer;
+          line-height: 1;
+        }
+
+        .board-square.light {
+          background: var(--light-sq);
+        }
+
+        .board-square.dark {
+          background: var(--dark-sq);
+        }
+
+        .board-square.selected {
+          outline: 3px solid var(--gold);
+          outline-offset: -3px;
+        }
+
+        .board-square.flash-path {
+          animation: slowFadePath 1500ms ease-out forwards;
+        }
+
+        .board-square.flash-from {
+          animation: slowFadeFrom 1500ms ease-out forwards;
+        }
+
+        .board-square.flash-to {
+          animation: slowFadeTo 3500ms ease-out forwards;
+        }
+
+        .board-square.flash {
+          animation: flashPulse ${FLASH_MS}ms ease;
+        }
+
+        .floating-thinking-badge {
+          position: fixed;
+          top: 20px;
+          left: 50%;
+          transform: translateX(-50%);
+          background: var(--walnut-dark);
+          color: #fbf8f2;
+          border: 2px solid var(--gold);
+          border-radius: 999px;
+          padding: 8px 18px;
+          font-size: 13px;
+          font-weight: 600;
+          box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+          z-index: 9999;
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          pointer-events: none;
+          animation: slideDownFade 0.25s ease-out;
+        }
+
+        .status-pill {
+          display: inline-flex;
+          align-items: center;
+          gap: 6px;
+          font-weight: 700;
+          font-size: 12px;
+          padding: 6px 14px;
+          border-radius: 999px;
+          animation: pulseBadge 1.2s infinite ease-in-out;
+        }
+
+        .status-pill.check {
+          background: #fff2f0;
+          color: var(--oxblood);
+          border: 1px solid var(--oxblood);
+        }
+
+        .status-pill.checkmate {
+          background: var(--oxblood);
+          color: #fff;
+          border: 1px solid var(--oxblood);
+        }
+
+        .status-pill.draw {
+          background: var(--walnut-dark);
+          color: var(--paper);
+          border: 1px solid var(--walnut);
+        }
+
+        .board-status-alert {
+          font-family: 'Fraunces', Georgia, serif;
+          font-weight: 700;
+          font-size: 14px;
+          text-align: center;
+          padding: 8px 12px;
+          border-radius: 4px;
+          margin-bottom: 8px;
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+          animation: slideInDown 0.3s ease-out;
+        }
+
+        .board-status-alert.check {
+          background: #ff4d4f;
+          color: #fff;
+          border: 1px solid #d9363e;
+        }
+
+        .board-status-alert.checkmate {
+          background: var(--oxblood);
+          color: #fff;
+          border: 1px solid #4a1515;
+          font-size: 15px;
+        }
+
+        .board-status-alert.draw {
+          background: var(--walnut-dark);
+          color: var(--paper);
+          border: 1px solid var(--walnut);
+        }
+
+        .board-square.king-in-check {
+          animation: kingCheckGlow 1s ease-in-out infinite;
+        }
+
+        .piece-disc.king-tilted {
+          transform: rotate(90deg);
+        }
+
+        @keyframes kingCheckGlow {
+          0%, 100% {
+            box-shadow: inset 0 0 0 999px rgba(220, 20, 20, 0.35), 0 0 14px 4px rgba(220, 20, 20, 0.55);
+          }
+          50% {
+            box-shadow: inset 0 0 0 999px rgba(220, 20, 20, 0.6), 0 0 22px 8px rgba(220, 20, 20, 0.85);
+          }
+        }
+
+        @keyframes slideInDown {
+          from {
+            opacity: 0;
+            transform: translateY(-8px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        @keyframes pulseBadge {
+          0%, 100% {
+            transform: scale(1);
+          }
+          50% {
+            transform: scale(1.04);
+          }
+        }
+
+        @keyframes slideDownFade {
+          from {
+            opacity: 0;
+            transform: translate(-50%, -14px);
+          }
+          to {
+            opacity: 1;
+            transform: translate(-50%, 0);
+          }
+        }
+
+        @keyframes slowFadePath {
+          0% {
+            box-shadow: inset 0 0 0 999px rgba(180, 160, 220, 0.65);
+          }
+          25% {
+            box-shadow: inset 0 0 0 999px rgba(180, 160, 220, 0.45);
+          }
+          100% {
+            box-shadow: inset 0 0 0 999px rgba(180, 160, 220, 0);
+          }
+        }
+
+        @keyframes slowFadeFrom {
+          0% {
+            box-shadow: inset 0 0 0 999px rgba(41, 188, 36, 0.9);
+          }
+          25% {
+            box-shadow: inset 0 0 0 999px rgba(255, 233, 110, 0.75);
+          }
+          100% {
+            box-shadow: inset 0 0 0 999px rgba(223, 31, 14, 0.38);
+          }
+        }
+
+        @keyframes slowFadeTo {
+          0% {
+            box-shadow: inset 0 0 0 999px rgba(80, 140, 90, 0.9);
+          }
+          25% {
+            box-shadow: inset 0 0 0 999px rgba(80, 140, 90, 0.75);
+          }
+          100% {
+            box-shadow: inset 0 0 0 999px rgba(80, 140, 90, 0.45);
+          }
+        }
+
+        @keyframes pieceSettle {
+          0% {
+            opacity: 0.18;
+          }
+          100% {
+            opacity: 1;
+          }
+        }
+
+        .piece-disc.piece-settle {
+          animation: pieceSettle 480ms ease-out;
+        }
+
+        @keyframes ghostFade {
+          0% {
+            opacity: 0.55;
+          }
+          100% {
+            opacity: 0;
+          }
+        }
+
+        .ghost-piece {
+          position: absolute;
+          inset: 0;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          pointer-events: none;
+          animation: ghostFade 2650ms ease-out forwards;
+        }
+
+        @keyframes captureFade {
+          0% {
+            opacity: 0.9;
+            transform: translate(0%, -50%) rotate(40deg) scale(1.1);
+          }
+          100% {
+            opacity: 0;
+            transform: translate(55%, -120%) rotate(28deg) scale(1.1);
+          }
+        }
+
+        .capture-ghost {
+          position: absolute;
+          inset: 0;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 30px;
+          pointer-events: none;
+          z-index: 6;
+          animation: captureFade 3900ms ease-out forwards;
+        }
+
+        @keyframes flashPulse {
+          0% {
+            box-shadow: inset 0 0 0 999px rgba(176, 141, 87, 0);
+          }
+          25% {
+            box-shadow: inset 0 0 0 999px rgba(176, 141, 87, 0.85);
+          }
+          100% {
+            box-shadow: inset 0 0 0 999px rgba(176, 141, 87, 0);
+          }
+        }
+
         .piece-disc {
           width: 82%;
           height: 82%;
@@ -1369,24 +1653,52 @@ export default function ChessLedger() {
           align-items: center;
           justify-content: center;
         }
+
         .piece-disc.white-disc {
-          background: radial-gradient(circle, rgba(42,39,36,0.6) 0%, rgba(42,39,36,0.3) 55%, rgba(42,39,36,0.4) 76%);
+          background: radial-gradient(circle, rgba(42, 39, 36, 0.6) 0%, rgba(42, 39, 36, 0.3) 55%, rgba(42, 39, 36, 0.4) 76%);
         }
+
         .piece-disc.black-disc {
-          background: radial-gradient(circle, rgba(255,255,255,0.5) 0%, rgba(255,255,255,0.24) 55%, rgba(255,255,255,0) 76%);
+          background: radial-gradient(circle, rgba(255, 255, 255, 0.5) 0%, rgba(255, 255, 255, 0.24) 55%, rgba(255, 255, 255, 0) 76%);
         }
+
         .board-square .white-piece {
           color: #fbf8f2;
-          text-shadow: 0 1px 2px rgba(0,0,0,0.55);
+          text-shadow: 0 1px 2px rgba(0, 0, 0, 0.55);
         }
+
         .board-square .black-piece {
           color: #201c18;
-          text-shadow: 0 1px 1px rgba(255,255,255,0.25);
+          text-shadow: 0 1px 1px rgba(255, 255, 255, 0.25);
         }
-        .coord-file, .coord-rank { font-size: 10px; color: var(--paper-dim); position: absolute; opacity: 0.7; }
-        .coord-file { bottom: 2px; right: 4px; }
-        .coord-rank { top: 2px; left: 4px; }
-        .captured-rail { min-height: 26px; display: flex; gap: 4px; padding: 4px 2px; font-size: 20px; color: var(--ink-soft); }
+
+        .coord-file,
+        .coord-rank {
+          font-size: 10px;
+          color: var(--paper-dim);
+          position: absolute;
+          opacity: 0.7;
+        }
+
+        .coord-file {
+          bottom: 2px;
+          right: 4px;
+        }
+
+        .coord-rank {
+          top: 2px;
+          left: 4px;
+        }
+
+        .captured-rail {
+          min-height: 26px;
+          display: flex;
+          gap: 4px;
+          padding: 4px 2px;
+          font-size: 20px;
+          color: var(--ink-soft);
+        }
+
         .ad-annot-banner {
           font-family: 'Fraunces', Georgia, serif;
           font-style: italic;
@@ -1401,72 +1713,423 @@ export default function ChessLedger() {
           padding: 8px 14px;
           margin-bottom: 8px;
           max-width: 416px;
- height: 78px;        
-  overflow-y: auto;
-  white-space: pre-wrap;          
+          height: 78px;
+          overflow-y: auto;
+          white-space: pre-wrap;
         }
-        .side-panel { flex: 1; min-width: 340px; }
-        .pill-row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
-        .turn-pill, .mode-pill { display: inline-flex; align-items: center; gap: 8px; background: var(--paper-dim); border: 1px solid var(--walnut); border-radius: 999px; padding: 6px 14px; font-size: 12px; }
-        .mode-pill.library { background: var(--felt); color: var(--paper); border-color: var(--felt); }
-        .dot { width: 9px; height: 9px; border-radius: 999px; border: 1px solid var(--ink); }
-        .section-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--ink-soft); margin: 16px 0 6px; }
-        .btn-row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin: 8px 0; }
-        .btn { font-family: 'JetBrains Mono', monospace; font-size: 12px; background: var(--paper); border: 1px solid var(--walnut); color: var(--ink); padding: 7px 12px; border-radius: 3px; cursor: pointer; }
-        .btn:hover { background: var(--paper-dim); }
-        .btn:disabled { opacity: 0.4; cursor: default; }
-        .btn.primary { background: var(--oxblood); border-color: var(--oxblood); color: #f7f0e8; }
-        .btn.active { background: var(--felt); border-color: var(--felt); color: #f7f0e8; }
-        .check-row { display: flex; gap: 16px; align-items: center; font-size: 12px; color: var(--ink-soft); flex-wrap: wrap; }
-        .check-row label { display: flex; align-items: center; gap: 5px; cursor: pointer; }
-        .countdown { font-family: 'Fraunces', serif; font-weight: 600; font-size: 15px; color: var(--oxblood); min-width: 74px; }
-        .meta-row { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 8px; }
-        .meta-field { display: flex; flex-direction: column; gap: 3px; font-size: 11px; color: var(--ink-soft); }
-        .meta-field input { font-family: 'JetBrains Mono', monospace; background: var(--paper); border: 1px solid var(--walnut); border-radius: 3px; padding: 5px 7px; color: var(--ink); font-size: 12px; }
-        .scoresheet { border: 1px solid var(--walnut); border-radius: 4px; overflow: hidden; background: var(--paper); margin-top: 6px; }
-        .scoresheet-head { display: grid; grid-template-columns: 40px 1fr 1fr 1.4fr; background: var(--walnut); color: var(--paper); font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; }
-        .scoresheet-head div { padding: 7px 8px; }
-        .scoresheet-body { max-height: min(58vh, 560px); overflow-y: auto; overscroll-behavior: contain; }
-        .scoresheet-row { display: grid; grid-template-columns: 40px 1fr 1fr 1.4fr; border-top: 1px solid var(--paper-dim); font-size: 13px; }
-        .scoresheet-row div { padding: 6px 8px; display: flex; align-items: center; }
-        .scoresheet-row .mv-no { color: var(--ink-soft); font-family: 'Fraunces', serif; }
-        .mv-cell { cursor: pointer; border-radius: 2px; }
-        .mv-cell:hover { background: var(--paper-dim); }
-        .mv-cell.active { background: var(--gold); color: var(--ink); font-weight: 600; }
-        .mv-cell.captured-move { color: var(--oxblood); }
-        .adannot-row { grid-column: 1 / -1; padding: 0 8px 8px 48px !important; font-size: 11px; font-style: italic; color: var(--ink-soft); }
-        .annot-input { width: 100%; border: none; background: transparent; font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--ink-soft); outline: none;   resize: none;        
-  overflow-y: auto;    
-  line-height: 18px;  }
-        .caption { font-size: 11px; color: var(--ink-soft); margin-top: 10px; line-height: 1.5; }
-        .modal-backdrop { position: fixed; inset: 0; background: rgba(20,16,12,0.55); display: flex; align-items: center; justify-content: center; z-index: 50; }
-        .modal { background: var(--paper); border: 1px solid var(--walnut); border-radius: 6px; padding: 22px; min-width: 260px; max-width: 90vw; }
-        .modal h3 { font-family: 'Fraunces', serif; margin: 0 0 14px; }
-        .promo-choices { display: flex; gap: 8px; }
-        .promo-choices button { flex: 1; font-size: 26px; padding: 10px 0; background: var(--paper-dim); border: 1px solid var(--walnut); border-radius: 4px; cursor: pointer; }
-        .promo-choices button:hover { background: var(--gold); }
-        textarea.export-area, textarea.import-area { width: 100%; height: 220px; font-family: 'JetBrains Mono', monospace; font-size: 11px; padding: 10px; border: 1px solid var(--walnut); border-radius: 4px; background: #fbf8f2; color: var(--ink); }
-        .library-list { max-height: 300px; overflow-y: auto; border: 1px solid var(--walnut); border-radius: 4px; margin-bottom: 14px; }
-        .library-row { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 10px 12px; border-top: 1px solid var(--paper-dim); }
-        .library-row:first-child { border-top: none; }
-        .library-row-title { font-size: 13px; }
-        .library-row-meta { font-size: 11px; color: var(--ink-soft); }
-        .import-error { color: var(--oxblood); font-size: 11px; margin-top: 6px; }
-        .setup-modal { min-width: 460px; }
-        .setup-layout { display: flex; gap: 20px; flex-wrap: wrap; align-items: flex-start; }
-        .setup-board-grid { display: grid; grid-template-columns: repeat(8, 40px); grid-template-rows: repeat(8, 40px); border: 3px solid var(--walnut); }
-        .setup-square { position: relative; display: flex; align-items: center; justify-content: center; font-size: 26px; user-select: none; cursor: pointer; line-height: 1; }
-        .setup-square.light { background: var(--light-sq); }
-        .setup-square.dark { background: var(--dark-sq); }
-        .setup-side { min-width: 190px; }
-        .setup-palette-row { display: flex; gap: 4px; margin-bottom: 6px; }
-        .setup-piece-btn { flex: 1; font-size: 22px; padding: 6px 0; background: var(--paper-dim); border: 1px solid var(--walnut); border-radius: 4px; cursor: pointer; line-height: 1; }
-        .setup-piece-btn:hover { background: var(--gold); }
-        .setup-piece-btn.active { background: var(--gold); outline: 2px solid var(--walnut-dark); outline-offset: -2px; }
-        .setup-eraser-btn { width: 100%; padding: 6px 0; margin-bottom: 12px; background: var(--paper-dim); border: 1px solid var(--walnut); border-radius: 4px; cursor: pointer; font-size: 12px; }
-        .setup-eraser-btn.active { background: var(--oxblood); color: #fff; }
-        .setup-turn-row { display: flex; gap: 6px; margin: 10px 0; }
-        .setup-turn-row .btn.active { background: var(--gold); }
+
+        .side-panel {
+          flex: 1;
+          min-width: 340px;
+        }
+
+        .pill-row {
+          display: flex;
+          gap: 8px;
+          flex-wrap: wrap;
+          align-items: center;
+        }
+
+        .turn-pill,
+        .mode-pill {
+          display: inline-flex;
+          align-items: center;
+          gap: 8px;
+          background: var(--paper-dim);
+          border: 1px solid var(--walnut);
+          border-radius: 999px;
+          padding: 6px 14px;
+          font-size: 12px;
+        }
+
+        .mode-pill.library {
+          background: var(--felt);
+          color: var(--paper);
+          border-color: var(--felt);
+        }
+
+        .dot {
+          width: 9px;
+          height: 9px;
+          border-radius: 999px;
+          border: 1px solid var(--ink);
+        }
+
+        .section-label {
+          font-size: 11px;
+          text-transform: uppercase;
+          letter-spacing: 0.08em;
+          color: var(--ink-soft);
+          margin: 16px 0 6px;
+        }
+
+        .btn-row {
+          display: flex;
+          gap: 8px;
+          flex-wrap: wrap;
+          align-items: center;
+          margin: 8px 0;
+        }
+
+        .btn {
+          font-family: 'JetBrains Mono', monospace;
+          font-size: 12px;
+          background: var(--paper);
+          border: 1px solid var(--walnut);
+          color: var(--ink);
+          padding: 7px 12px;
+          border-radius: 3px;
+          cursor: pointer;
+        }
+
+        .btn:hover {
+          background: var(--paper-dim);
+        }
+
+        .btn:disabled {
+          opacity: 0.4;
+          cursor: default;
+        }
+
+        .btn.primary {
+          background: var(--oxblood);
+          border-color: var(--oxblood);
+          color: #f7f0e8;
+        }
+
+        .btn.active {
+          background: var(--felt);
+          border-color: var(--felt);
+          color: #f7f0e8;
+        }
+
+        .check-row {
+          display: flex;
+          gap: 16px;
+          align-items: center;
+          font-size: 12px;
+          color: var(--ink-soft);
+          flex-wrap: wrap;
+        }
+
+        .check-row label {
+          display: flex;
+          align-items: center;
+          gap: 5px;
+          cursor: pointer;
+        }
+
+        .countdown {
+          font-family: 'Fraunces', serif;
+          font-weight: 600;
+          font-size: 15px;
+          color: var(--oxblood);
+          min-width: 74px;
+        }
+
+        .meta-row {
+          display: flex;
+          gap: 10px;
+          flex-wrap: wrap;
+          margin-bottom: 8px;
+        }
+
+        .meta-field {
+          display: flex;
+          flex-direction: column;
+          gap: 3px;
+          font-size: 11px;
+          color: var(--ink-soft);
+        }
+
+        .meta-field input {
+          font-family: 'JetBrains Mono', monospace;
+          background: var(--paper);
+          border: 1px solid var(--walnut);
+          border-radius: 3px;
+          padding: 5px 7px;
+          color: var(--ink);
+          font-size: 12px;
+        }
+
+        .scoresheet {
+          border: 1px solid var(--walnut);
+          border-radius: 4px;
+          overflow: hidden;
+          background: var(--paper);
+          margin-top: 6px;
+        }
+
+        .scoresheet-head {
+          display: grid;
+          grid-template-columns: 40px 1fr 1fr 1.4fr;
+          background: var(--walnut);
+          color: var(--paper);
+          font-size: 11px;
+          letter-spacing: 0.06em;
+          text-transform: uppercase;
+        }
+
+        .scoresheet-head div {
+          padding: 7px 8px;
+        }
+
+        .scoresheet-body {
+          max-height: min(58vh, 560px);
+          overflow-y: auto;
+          overscroll-behavior: contain;
+        }
+
+        .scoresheet-row {
+          display: grid;
+          grid-template-columns: 40px 1fr 1fr 1.4fr;
+          border-top: 1px solid var(--paper-dim);
+          font-size: 13px;
+        }
+
+        .scoresheet-row div {
+          padding: 6px 8px;
+          display: flex;
+          align-items: center;
+        }
+
+        .scoresheet-row .mv-no {
+          color: var(--ink-soft);
+          font-family: 'Fraunces', serif;
+        }
+
+        .mv-cell {
+          cursor: pointer;
+          border-radius: 2px;
+        }
+
+        .mv-cell:hover {
+          background: var(--paper-dim);
+        }
+
+        .mv-cell.active {
+          background: var(--gold);
+          color: var(--ink);
+          font-weight: 600;
+        }
+
+        .mv-cell.captured-move {
+          color: var(--oxblood);
+        }
+
+        .adannot-row {
+          grid-column: 1 / -1;
+          padding: 0 8px 8px 48px !important;
+          font-size: 11px;
+          font-style: italic;
+          color: var(--ink-soft);
+        }
+
+        .annot-input {
+          width: 100%;
+          border: none;
+          background: transparent;
+          font-family: 'JetBrains Mono', monospace;
+          font-size: 12px;
+          color: var(--ink-soft);
+          outline: none;
+          resize: none;
+          overflow-y: auto;
+          line-height: 18px;
+        }
+
+        .caption {
+          font-size: 11px;
+          color: var(--ink-soft);
+          margin-top: 10px;
+          line-height: 1.5;
+        }
+
+        .modal-backdrop {
+          position: fixed;
+          inset: 0;
+          background: rgba(20, 16, 12, 0.55);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          z-index: 50;
+        }
+
+        .modal {
+          background: var(--paper);
+          border: 1px solid var(--walnut);
+          border-radius: 6px;
+          padding: 22px;
+          min-width: 260px;
+          max-width: 90vw;
+        }
+
+        .modal h3 {
+          font-family: 'Fraunces', serif;
+          margin: 0 0 14px;
+        }
+
+        .promo-choices {
+          display: flex;
+          gap: 8px;
+        }
+
+        .promo-choices button {
+          flex: 1;
+          font-size: 26px;
+          padding: 10px 0;
+          background: var(--paper-dim);
+          border: 1px solid var(--walnut);
+          border-radius: 4px;
+          cursor: pointer;
+        }
+
+        .promo-choices button:hover {
+          background: var(--gold);
+        }
+
+        textarea.export-area,
+        textarea.import-area {
+          width: 100%;
+          height: 220px;
+          font-family: 'JetBrains Mono', monospace;
+          font-size: 11px;
+          padding: 10px;
+          border: 1px solid var(--walnut);
+          border-radius: 4px;
+          background: #fbf8f2;
+          color: var(--ink);
+        }
+
+        .library-list {
+          max-height: 300px;
+          overflow-y: auto;
+          border: 1px solid var(--walnut);
+          border-radius: 4px;
+          margin-bottom: 14px;
+        }
+
+        .library-row {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          gap: 10px;
+          padding: 10px 12px;
+          border-top: 1px solid var(--paper-dim);
+        }
+
+        .library-row:first-child {
+          border-top: none;
+        }
+
+        .library-row-title {
+          font-size: 13px;
+        }
+
+        .library-row-meta {
+          font-size: 11px;
+          color: var(--ink-soft);
+        }
+
+        .import-error {
+          color: var(--oxblood);
+          font-size: 11px;
+          margin-top: 6px;
+        }
+
+        .setup-modal {
+          min-width: 460px;
+        }
+
+        .setup-layout {
+          display: flex;
+          gap: 20px;
+          flex-wrap: wrap;
+          align-items: flex-start;
+        }
+
+        .setup-board-grid {
+          display: grid;
+          grid-template-columns: repeat(8, 40px);
+          grid-template-rows: repeat(8, 40px);
+          border: 3px solid var(--walnut);
+        }
+
+        .setup-square {
+          position: relative;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 26px;
+          user-select: none;
+          cursor: pointer;
+          line-height: 1;
+        }
+
+        .setup-square.light {
+          background: var(--light-sq);
+        }
+
+        .setup-square.dark {
+          background: var(--dark-sq);
+        }
+
+        .setup-side {
+          min-width: 190px;
+        }
+
+        .setup-palette-row {
+          display: flex;
+          gap: 4px;
+          margin-bottom: 6px;
+        }
+
+        .setup-piece-btn {
+          flex: 1;
+          font-size: 22px;
+          padding: 6px 0;
+          background: var(--paper-dim);
+          border: 1px solid var(--walnut);
+          border-radius: 4px;
+          cursor: pointer;
+          line-height: 1;
+        }
+
+        .setup-piece-btn:hover {
+          background: var(--gold);
+        }
+
+        .setup-piece-btn.active {
+          background: var(--gold);
+          outline: 2px solid var(--walnut-dark);
+          outline-offset: -2px;
+        }
+
+        .setup-eraser-btn {
+          width: 100%;
+          padding: 6px 0;
+          margin-bottom: 12px;
+          background: var(--paper-dim);
+          border: 1px solid var(--walnut);
+          border-radius: 4px;
+          cursor: pointer;
+          font-size: 12px;
+        }
+
+        .setup-eraser-btn.active {
+          background: var(--oxblood);
+          color: #fff;
+        }
+
+        .setup-turn-row {
+          display: flex;
+          gap: 6px;
+          margin: 10px 0;
+        }
+
+        .setup-turn-row .btn.active {
+          background: var(--gold);
+        }
       `}</style>
 
       <div className="ledger-layout">
@@ -1513,7 +2176,7 @@ export default function ChessLedger() {
                     piece && piece.type === "k" &&
                     gameStatus?.type === "checkmate" &&
                     piece.color === gameStatus.checkedColor;
-                    return (
+                  return (
                     <div
                       key={sq + (isFrom || isTo || isPath ? flash.id : "")}
                       className={`board-square ${light ? "light" : "dark"} ${selected === sq ? "selected" : ""} ${isFrom ? "flash-from" : ""} ${isTo ? "flash-to" : ""} ${isPath ? "flash-path" : ""} ${isCheckedKing ? "king-in-check" : ""}`} onClick={() => pickSquare(sq)}
@@ -1521,7 +2184,7 @@ export default function ChessLedger() {
                       onDrop={() => onDrop(sq)}
                     >                      {fi === 0 && <span className="coord-rank">{r}</span>}
                       {r === displayRanks[displayRanks.length - 1] && <span className="coord-file">{f}</span>}
-{piece && (
+                      {piece && (
                         <div className={`piece-disc ${piece.color === "w" ? "white-disc" : "black-disc"} ${isTo ? "piece-settle" : ""} ${isMatedKing ? "king-tilted" : ""}`}>
                           <span
                             draggable={mode === "freeplay" && atEnd && piece.color === turn && !pendingMove}
@@ -1638,29 +2301,46 @@ export default function ChessLedger() {
           <div className="section-label">Game meta</div>
           <div className="meta-row">
             <label className="meta-field">Id
-              <input type="number" value={gameMeta.id} onChange={(e) => setGameMeta({ ...gameMeta, id: Number(e.target.value) })} style={{ width: 60 }} disabled={mode === "library"} />
+              <input
+                type="number"
+                value={gameMeta.id}
+                onChange={(e) => setGameMeta({ ...gameMeta, id: Number(e.target.value) })}
+                style={{ width: 60 }}
+                disabled={mode === "library"}
+              />
             </label>
+
             <label className="meta-field">GName
-              <input value={gameMeta.gName} onChange={(e) => setGameMeta({ ...gameMeta, gName: e.target.value })} style={{ width: 200 }} disabled={mode === "library"} />
+              <input
+                value={gameMeta.gName}
+                onChange={(e) => setGameMeta({ ...gameMeta, gName: e.target.value })}
+                style={{ width: 200 }}
+                disabled={mode === "library"}
+              />
             </label>
 
-
-            <label className="meta-field">PauseFor (1234-25555 ms)
+            <label
+              className="meta-field"
+              onDoubleClick={handlePauseForDoubleClick}
+              style={{ cursor: "pointer", userSelect: "none" }}
+              title="Double-click to double this value (1234ms up to 60000ms / 60s, then cycles back to 1234ms)"
+            >
+              PauseFor (1234–60000 ms)
               <input
                 type="number"
                 min={1234}
-                max={25555}
+                max={60000}
                 value={gameMeta.pauseFor}
+                onDoubleClick={handlePauseForDoubleClick}
                 onChange={(e) => {
                   const val = Number(e.target.value);
                   setGameMeta((prev) => ({ ...prev, pauseFor: val }));
                   if (activeGame) {
-                    setActiveGame((prev) => prev ? { ...prev, chsGm: { ...prev.chsGm, PauseFor: val } } : null);
+                    setActiveGame((prev) => (prev ? { ...prev, chsGm: { ...prev.chsGm, PauseFor: val } } : null));
                   }
                 }}
-                style={{ width: 100 }}
+                style={{ width: 110, cursor: "pointer" }}
               />
-              <input type="number" value={gameMeta.pauseFor} onChange={(e) => setGameMeta({ ...gameMeta, pauseFor: Number(e.target.value) })} style={{ width: 80 }} disabled={mode === "library"} />
             </label>
           </div>
           <div className="section-label">Playback</div>
@@ -1690,6 +2370,25 @@ export default function ChessLedger() {
               style={{ width: 46, fontFamily: "inherit", fontSize: 12, border: "1px solid var(--walnut)", borderRadius: 3, padding: "6px 4px" }}
             />
             <button className="btn" onClick={fastForward} disabled={atEnd}>⏩ Fastmove</button>
+            <label
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: 5,
+                fontSize: 12,
+                cursor: "pointer",
+                marginLeft: 6,
+                color: "var(--ink-soft)",
+              }}
+              title="Auto-scrolls overflowing annotations back and forth. Tip: Increase PauseFor so there is enough time to read before the next move. Mouse hover also scrolls to the hovered annotation."
+            >
+              <input
+                type="checkbox"
+                checked={autoScrollAnnot}
+                onChange={(e) => setAutoScrollAnnot(e.target.checked)}
+              />
+              Auto-Scroll
+            </label>
           </div>
           <div className="btn-row" style={{ alignItems: "center" }}>
             {isThinking && (
@@ -1714,9 +2413,12 @@ export default function ChessLedger() {
                     <div style={{ padding: "4px 8px" }}>
                       <textarea
                         className="annot-input"
+                        data-annot-moveno={r.moveNo}
                         placeholder="note…"
                         value={annotations[r.moveNo]?.annot || ""}
                         onChange={(e) => setAnnot(r.moveNo, e.target.value)}
+                        onMouseEnter={(e) => handleAnnotMouseEnter(e.currentTarget)}
+                        onMouseLeave={(e) => handleAnnotMouseLeave(e.currentTarget)}
                         rows={3}
                         style={{
                           resize: "none",
@@ -1729,7 +2431,6 @@ export default function ChessLedger() {
                       />
                     </div>
                   </div>
-                  {r.adAnnot && <div className="scoresheet-row" data-moveno={r.moveNo}><div className="adannot-row">{r.adAnnot}</div></div>}
                 </div>
               ))}
             </div>
@@ -1993,7 +2694,7 @@ function evaluateBoard(board) {
 }
 
 /* ---------------------------------------------------------------------- */
-/* Bulletproof Legal Engine using chess.js (~1400 ELO)                    */
+/*  Legal Engine using chess.js (~1400 ELO)                    */
 /* ---------------------------------------------------------------------- */
 
 

@@ -2237,5 +2237,241 @@
         "RtfAnnot": ""
       }
     ]
+  },
+  {
+    "chsGm": {
+      "Id": 10,
+      "GName": "Queen's Gambit Declined / Semi-Tarrasch / Rubinstein's Immortal Game - Georg Rotlewi vs. Akiba Rubinstein (1907)",
+      "PauseFor": 3333,
+      "StrtPos": "",
+      "Remind": ""
+    },
+    "moves": [
+      {
+        "Id": 10,
+        "MoveNo": "1",
+        "Wh": "d2-d4",
+        "Bl": "d7-d5",
+        "Annot": "White stakes a classical claim on the center while freeing lines for his queen and dark-squared bishop. Black responds symmetrically to control the vital e4-square and establish equal footing in the center.",
+        "AdAnnot": "",
+        "RtfAnnot": ""
+      },
+      {
+        "Id": 10,
+        "MoveNo": "2",
+        "Wh": "g1-f3",
+        "Bl": "e7-e6",
+        "Annot": "Developing the king's knight to its most natural post to increase influence over e5 and d4. Black solidly fortifies his central pawn and opens a path for the king's bishop.",
+        "AdAnnot": "",
+        "RtfAnnot": ""
+      },
+      {
+        "Id": 10,
+        "MoveNo": "3",
+        "Wh": "e2-e3",
+        "Bl": "c7-c5",
+        "Annot": "White adopts a solid Colle-like pawn structure to safeguard d4 before committing pieces. Black immediately initiates the thematic counter-thrust against White's central wedge.",
+        "AdAnnot": "",
+        "RtfAnnot": ""
+      },
+      {
+        "Id": 10,
+        "MoveNo": "4",
+        "Wh": "c2-c4",
+        "Bl": "b8-c6",
+        "Annot": "White offers a symmetrical counter-stroke to contest the d5-square directly. Developing the knight toward the center adds vital pressure against d4 and prepares rapid queenside mobilization.",
+        "AdAnnot": "",
+        "RtfAnnot": ""
+      },
+      {
+        "Id": 10,
+        "MoveNo": "5",
+        "Wh": "b1-c3",
+        "Bl": "g8-f6",
+        "Annot": "Both sides steadily complete their central development, reinforcing the tension across the board before committing their pawns.",
+        "AdAnnot": "",
+        "RtfAnnot": ""
+      },
+      {
+        "Id": 10,
+        "MoveNo": "6",
+        "Wh": "d4-c5",
+        "Bl": "f8-c5",
+        "Annot": "White prematurely releases central tension, handing Black a clean tempo in development. Black recaptures actively, placing the bishop on an aggressive diagonal aimed directly toward White's kingside.",
+        "AdAnnot": "",
+        "RtfAnnot": ""
+      },
+      {
+        "Id": 10,
+        "MoveNo": "7",
+        "Wh": "a2-a3",
+        "Bl": "a7-a6",
+        "Annot": "White prepares to expand on the queenside with b2-b4 to displace Black's active bishop. Black secures an escape square on a7 while preparing his own queenside expansion.",
+        "AdAnnot": "",
+        "RtfAnnot": ""
+      },
+      {
+        "Id": 10,
+        "MoveNo": "8",
+        "Wh": "b2-b4",
+        "Bl": "c5-d6",
+        "Annot": "White gains queenside territory and kicks the opposing bishop. Rubinstein posts the bishop on d6 rather than retreating passively, maintaining firm control over the vital e5-square.",
+        "AdAnnot": "",
+        "RtfAnnot": ""
+      },
+      {
+        "Id": 10,
+        "MoveNo": "9",
+        "Wh": "c1-b2",
+        "Bl": "e8-g8",
+        "Annot": "The bishop finds an ideal perch along the open diagonal to exert long-range pressure. Black tucks his king into complete safety and connects his rooks, finishing the primary goals of the opening.",
+        "AdAnnot": "",
+        "RtfAnnot": ""
+      },
+      {
+        "Id": 10,
+        "MoveNo": "10",
+        "Wh": "d1-d2",
+        "Bl": "d8-e7",
+        "Annot": "An awkward queen sortie that blocks the light-squared bishop and exposes White to tactical lines down the d-file. Black unpins his central pawn and unblocks the back rank to welcome an incoming rook.",
+        "AdAnnot": "",
+        "RtfAnnot": ""
+      },
+      {
+        "Id": 10,
+        "MoveNo": "11",
+        "Wh": "f1-d3",
+        "Bl": "d5-c4",
+        "Annot": "White develops his bishop to facilitate castling, but Black resolves the central tension at the perfect psychological moment. By forcing White to recapture, Black secures full control over the central files.",
+        "AdAnnot": "",
+        "RtfAnnot": ""
+      },
+      {
+        "Id": 10,
+        "MoveNo": "12",
+        "Wh": "d3-c4",
+        "Bl": "b7-b5",
+        "Annot": "White restores material balance while maintaining presence on the diagonal. Black strikes immediately on the flank, gaining a tempo against the bishop while preparing the fianchetto of his light-squared bishop.",
+        "AdAnnot": "",
+        "RtfAnnot": ""
+      },
+      {
+        "Id": 10,
+        "MoveNo": "13",
+        "Wh": "c4-d3",
+        "Bl": "f8-d8",
+        "Annot": "The bishop retreats to safety, but it remains awkwardly aligned on the d-file. Black centralizes his rook with tremendous energy, pinning White's queen in uncomfortable x-ray alignment.",
+        "AdAnnot": "",
+        "RtfAnnot": ""
+      },
+      {
+        "Id": 10,
+        "MoveNo": "14",
+        "Wh": "d2-e2",
+        "Bl": "c8-b7",
+        "Annot": "Sensibly stepping off the hazardous d-file to connect the rooks. Black finalizes his minor piece development, establishing a lethal cross-diagonal battery directed against White's kingside.",
+        "AdAnnot": "",
+        "RtfAnnot": ""
+      },
+      {
+        "Id": 10,
+        "MoveNo": "15",
+        "Wh": "e1-g1",
+        "Bl": "c6-e5",
+        "Annot": "White finally hustles his king into safety, but his lagging coordination invites an immediate tactical breakthrough. Black centralizes his knight with commanding force, seeking to eliminate White's best defensive piece.",
+        "AdAnnot": "",
+        "RtfAnnot": ""
+      },
+      {
+        "Id": 10,
+        "MoveNo": "16",
+        "Wh": "f3-e5",
+        "Bl": "d6-e5",
+        "Annot": "White exchanges knights to reduce immediate central pressure. Black recaptures with the bishop, activating yet another laser-like diagonal aimed at White's castled shelter.",
+        "AdAnnot": "",
+        "RtfAnnot": ""
+      },
+      {
+        "Id": 10,
+        "MoveNo": "17",
+        "Wh": "f2-f4",
+        "Bl": "e5-c7",
+        "Annot": "A weakening thrust intended to drive the bishop away, but it irremediably loosens White's dark squares. Rubinstein calmly pulls back, repositioning the bishop along the deadly a7-g1 avenue.",
+        "AdAnnot": "",
+        "RtfAnnot": ""
+      },
+      {
+        "Id": 10,
+        "MoveNo": "18",
+        "Wh": "e3-e4",
+        "Bl": "a8-c8",
+        "Annot": "White seeks central counterplay and attempts to erect a barrier against Black's bishops. Black mobilizes his final dormant reserve, claiming the open c-file and achieving total piece harmony.",
+        "AdAnnot": "",
+        "RtfAnnot": ""
+      },
+      {
+        "Id": 10,
+        "MoveNo": "19",
+        "Wh": "e4-e5",
+        "Bl": "c7-b6",
+        "Annot": "Attacking the knight pushes the pawns too far, critically surrendering the d4-square and leaving the king without pawn cover. Black delivers a crushing intermediate check that forces the white monarch into the corner.",
+        "AdAnnot": "",
+        "RtfAnnot": ""
+      },
+      {
+        "Id": 10,
+        "MoveNo": "20",
+        "Wh": "g1-h1",
+        "Bl": "f6-g4",
+        "Annot": "The king is forced into hiding where it becomes vulnerable to back-rank mating nets. Rubinstein springs forward with his knight, threatening mate on h2 and unmasking the latent energy of his pieces.",
+        "AdAnnot": "",
+        "RtfAnnot": ""
+      },
+      {
+        "Id": 10,
+        "MoveNo": "21",
+        "Wh": "d3-e4",
+        "Bl": "e7-h4",
+        "Annot": "White attempts to neutralize Black's light-squared bishop and guard the kingside. Black ignores the threat entirely and brings his queen into the attack, establishing an immediate mate threat on h2.",
+        "AdAnnot": "",
+        "RtfAnnot": ""
+      },
+      {
+        "Id": 10,
+        "MoveNo": "22",
+        "Wh": "g2-g3",
+        "Bl": "c8-c3",
+        "Annot": "White parries the direct mate by shielding h2, but fatally compromises his dark squares. Black unleashes an immortal deflection sacrifice, shattering White's defense and removing the guardian of e2.",
+        "AdAnnot": "",
+        "RtfAnnot": ""
+      },
+      {
+        "Id": 10,
+        "MoveNo": "23",
+        "Wh": "g3-h4",
+        "Bl": "d8-d2",
+        "Annot": "White captures the queen, hoping the sacrifice was unsound, only to be hit by a second thunderbolt. Black's rook invades the seventh rank to deflect White's queen from the defense of the e4-bishop.",
+        "AdAnnot": "",
+        "RtfAnnot": ""
+      },
+      {
+        "Id": 10,
+        "MoveNo": "24",
+        "Wh": "e2-d2",
+        "Bl": "b7-e4",
+        "Annot": "White is compelled to accept the rook to avert instant checkmate. Black recaptures with check, ushering in the unstoppable cross-fire of his paired bishops.",
+        "AdAnnot": "",
+        "RtfAnnot": ""
+      },
+      {
+        "Id": 10,
+        "MoveNo": "25",
+        "Wh": "d2-g2",
+        "Bl": "c3-h3",
+        "Annot": "White interposes desperately, expecting the queen to be taken. Rubinstein plays the quiet coup de grâce, exploiting the absolute pin on the queen to force an unavoidable mate on h2.",
+        "AdAnnot": "",
+        "RtfAnnot": ""
+      }
+    ]
   }
 ]
