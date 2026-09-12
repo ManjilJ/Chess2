@@ -423,6 +423,7 @@ export default function ChessLedger() {
   const fastForwardTimerRef = useRef(null);
   const [vsComputer, setVsComputer] = useState(false);
   const [isThinking, setIsThinking] = useState(false);
+  const lastMoveTimeRef = useRef(0);
 
   useEffect(() => { pliesRef.current = plies; }, [plies]);
   useEffect(() => { plyIndexRef.current = plyIndex; }, [plyIndex]);
@@ -1118,14 +1119,43 @@ export default function ChessLedger() {
     setPlyIndex(0);
     setSelected(null);
   }
+
   function undo() {
-    if (plyIndex > 0) setPlyIndex(plyIndex - 1);
+    setPlyIndex(prev => Math.max(0, prev - 1));
     setSelected(null);
   }
+
   function forward() {
-    if (plyIndex < plies.length) setPlyIndex(plyIndex + 1);
+    setPlyIndex(prev => Math.min(plies.length, prev + 1));
     setSelected(null);
   }
+  useEffect(() => {
+    const THROTTLE_MS = 100; // Speed of movement when holding down (10 moves/sec)
+
+    const handleKeyDown = (e) => {
+      if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return;
+      e.preventDefault();
+
+      // Throttle the repeat rate so it moves at a smooth, readable speed
+      const now = Date.now();
+      if (now - lastMoveTimeRef.current < THROTTLE_MS) {
+        return;
+      }
+      lastMoveTimeRef.current = now;
+
+      if (e.key === 'ArrowRight') {
+        setPlyIndex(prev => Math.min(plies.length, prev + 1));
+        setSelected(null);
+      } else if (e.key === 'ArrowLeft') {
+        setPlyIndex(prev => Math.max(0, prev - 1));
+        setSelected(null);
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [plies.length]);
+
   function jumpTo(n) {
     setRunning(false);
     setPlyIndex(Math.max(0, Math.min(plies.length, n)));
@@ -1309,7 +1339,7 @@ export default function ChessLedger() {
   const displayFiles = boardFlipped ? [...FILES].reverse() : FILES;
   return (
     <div className="ledger-root">
-<style>{`
+      <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=JetBrains+Mono:wght@400;500;600&display=swap');
 
         .ledger-root {
