@@ -2461,6 +2461,7 @@ export default function ChessLedger() {
                       />
                     </div>
                   </div>
+                  {r.adAnnot && <div className="scoresheet-row" data-moveno={r.moveNo}><div className="adannot-row">{r.adAnnot}</div></div>}
                 </div>
               ))}
             </div>
