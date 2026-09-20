@@ -2,6 +2,7 @@ import { useState, useMemo, useRef, useEffect } from "react";
 import seedGames from "./chessGames.json";
 import { Chess } from "chess.js";
 import { generateAICommentary } from "./chessCommentator.js";
+import Board3D from "./Board3D.jsx";
 /* ---------------------------------------------------------------------- */
 /* Board model                                                             */
 /* ---------------------------------------------------------------------- */
@@ -25,6 +26,7 @@ const DEFAULT_PAUSE_MS = 1234;
 const FLASH_MS = 2550;
 const MAX_LOOPS = 250000;
 const FAST_FORWARD_MS = 250; // blitz-speed interval for the Fastmove button
+
 
 function parsePieceCode(code) {
   const str = code.trim().toLowerCase();
@@ -407,7 +409,7 @@ export default function ChessLedger() {
   const [showCountdown, setShowCountdown] = useState(false);
   const [autoScrollAnnot, setAutoScrollAnnot] = useState(false);
   const [boardFlipped, setBoardFlipped] = useState(false);
-  const [msRemaining, setMsRemaining] = useState(0);
+  const [is3D, setIs3D] = useState(false); const [msRemaining, setMsRemaining] = useState(0);
   const [fastN, setFastN] = useState(5);
   const [flash, setFlash] = useState(null);
 
@@ -1388,6 +1390,16 @@ export default function ChessLedger() {
           align-self: flex-start;
           z-index: 5;
         }
+        .board-col.mode-3d {
+          flex: 1 1 620px;
+          max-width: 62%;
+        }
+        .side-panel { flex: 1; min-width: 340px; }
+        .side-panel.mode-3d {
+          flex: 1 1 320px;
+          max-width: 38%;
+          min-width: 300px;
+        }
 
         .board-wrap {
           background: var(--walnut-dark);
@@ -2164,7 +2176,8 @@ export default function ChessLedger() {
 
       <div className="ledger-layout">
         {/* Board */}
-        <div className="board-col">
+        <div className={`board-col ${is3D ? "mode-3d" : ""}`}>
+          <div className={`side-panel ${is3D ? "mode-3d" : ""}`}></div>
           <div className="ad-annot-banner">
             {currentAdAnnot || currentAnnot || (
               <span style={{ opacity: 0.45, fontStyle: "normal" }}>No annotation for this move</span>
@@ -2177,73 +2190,85 @@ export default function ChessLedger() {
             </div>
           )}
 
-
           <div className="captured-rail">
             {capturedBlack.map((p, i) => <span key={i} className="black-piece">{GLYPH.b[p.type]}</span>)}
           </div>
           <div className="board-wrap">
-            <div className="board-grid">
-              {displayRanks.map((r) =>
-                displayFiles.map((f, fi) => {
-                  const sq = f + r;
-                  const piece = board[sq];
-                  const light = (fileIdx(sq) + r) % 2 === 0;
+            {is3D ? (<Board3D
+              board={board}
+              FILES={FILES}
+              RANKS={RANKS}
+              selected={selected}
+              flash={flash}
+              gameStatus={gameStatus}
+              pickSquare={pickSquare}
+              onDrop={onDrop}
+              fileIdx={fileIdx}
+            />) : (
+              <div className="board-grid">
+                {displayRanks.map((r) =>
+                  displayFiles.map((f, fi) => {
+                    const sq = f + r;
+                    const piece = board[sq];
+                    const light = (fileIdx(sq) + r) % 2 === 0;
 
-                  // Check if this square is the departure or arrival square
-                  const isFrom = flash && flash.fromSquares?.includes(sq);
-                  const isTo = flash && flash.toSquares?.includes(sq);
-                  const isPath = flash && flash.pathSquares?.includes(sq);
-                  // The piece that just vacated this square, if any — used
-                  // to draw a fading afterimage where it used to be. Only
-                  // relevant when the square is now empty; a real piece
-                  // (below) always takes visual priority.
-                  const ghost = !piece && flash && flash.ghosts?.find((g) => g.sq === sq);
-                  const isCheckedKing =
-                    piece && piece.type === "k" &&
-                    (gameStatus?.type === "check" || gameStatus?.type === "checkmate") &&
-                    piece.color === gameStatus.checkedColor;
-                  const isMatedKing =
-                    piece && piece.type === "k" &&
-                    gameStatus?.type === "checkmate" &&
-                    piece.color === gameStatus.checkedColor;
-                  return (
-                    <div
-                      key={sq + (isFrom || isTo || isPath ? flash.id : "")}
-                      className={`board-square ${light ? "light" : "dark"} ${selected === sq ? "selected" : ""} ${isFrom ? "flash-from" : ""} ${isTo ? "flash-to" : ""} ${isPath ? "flash-path" : ""} ${isCheckedKing ? "king-in-check" : ""}`} onClick={() => pickSquare(sq)}
-                      onDragOver={(e) => e.preventDefault()}
-                      onDrop={() => onDrop(sq)}
-                    >                      {fi === 0 && <span className="coord-rank">{r}</span>}
-                      {r === displayRanks[displayRanks.length - 1] && <span className="coord-file">{f}</span>}
-                      {piece && (
-                        <div className={`piece-disc ${piece.color === "w" ? "white-disc" : "black-disc"} ${isTo ? "piece-settle" : ""} ${isMatedKing ? "king-tilted" : ""}`}>
-                          <span
-                            draggable={mode === "freeplay" && atEnd && piece.color === turn && !pendingMove}
-                            onDragStart={() => setDragSq(sq)}
-                            className={piece.color === "w" ? "white-piece" : "black-piece"}
-                          >
-                            {GLYPH[piece.color][piece.type]}
-                          </span>
-                        </div>
-                      )}
-                      {ghost && (
-                        <div className="ghost-piece">
-                          <span className={ghost.color === "w" ? "white-piece" : "black-piece"}>
-                            {GLYPH[ghost.color][ghost.type]}
-                          </span>
-                        </div>
-                      )}
-                      {flash?.captureGhost?.sq === sq && (
-                        <div className="capture-ghost">
-                          <span className={flash.captureGhost.color === "w" ? "white-piece" : "black-piece"}>
-                            {GLYPH[flash.captureGhost.color][flash.captureGhost.type]}
-                          </span>
-                        </div>
-                      )}
-                    </div>
-                  );
-                })
-              )}
-            </div>
+                    // Check if this square is the departure or arrival square
+                    const isFrom = flash && flash.fromSquares?.includes(sq);
+                    const isTo = flash && flash.toSquares?.includes(sq);
+                    const isPath = flash && flash.pathSquares?.includes(sq);
+                    // The piece that just vacated this square, if any — used
+                    // to draw a fading afterimage where it used to be. Only
+                    // relevant when the square is now empty; a real piece
+                    // (below) always takes visual priority.
+                    const ghost = !piece && flash && flash.ghosts?.find((g) => g.sq === sq);
+                    const isCheckedKing =
+                      piece && piece.type === "k" &&
+                      (gameStatus?.type === "check" || gameStatus?.type === "checkmate") &&
+                      piece.color === gameStatus.checkedColor;
+                    const isMatedKing =
+                      piece && piece.type === "k" &&
+                      gameStatus?.type === "checkmate" &&
+                      piece.color === gameStatus.checkedColor;
+                    return (
+                      <div
+                        key={sq + (isFrom || isTo || isPath ? flash.id : "")}
+                        className={`board-square ${light ? "light" : "dark"} ${selected === sq ? "selected" : ""} ${isFrom ? "flash-from" : ""} ${isTo ? "flash-to" : ""} ${isPath ? "flash-path" : ""} ${isCheckedKing ? "king-in-check" : ""}`} onClick={() => pickSquare(sq)}
+                        onDragOver={(e) => e.preventDefault()}
+                        onDrop={() => onDrop(sq)}
+                      >
+                        {fi === 0 && <span className="coord-rank">{r}</span>}
+                        {r === displayRanks[displayRanks.length - 1] && <span className="coord-file">{f}</span>}
+                        {piece && (
+                          <div className={`piece-disc ${piece.color === "w" ? "white-disc" : "black-disc"} ${isTo ? "piece-settle" : ""} ${isMatedKing ? "king-tilted" : ""}`}>
+                            <span
+                              draggable={mode === "freeplay" && atEnd && piece.color === turn && !pendingMove}
+                              onDragStart={() => setDragSq(sq)}
+                              className={piece.color === "w" ? "white-piece" : "black-piece"}
+                            >
+                              {GLYPH[piece.color][piece.type]}
+                            </span>
+                          </div>
+                        )}
+                        {ghost && (
+                          <div className="ghost-piece">
+                            <span className={ghost.color === "w" ? "white-piece" : "black-piece"}>
+                              {GLYPH[ghost.color][ghost.type]}
+                            </span>
+                          </div>
+                        )}
+                        {flash?.captureGhost?.sq === sq && (
+                          <div className="capture-ghost">
+                            <span className={flash.captureGhost.color === "w" ? "white-piece" : "black-piece"}>
+                              {GLYPH[flash.captureGhost.color][flash.captureGhost.type]}
+                            </span>
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })
+                )}
+              </div>
+            )}
           </div>
           <div className="captured-rail">
             {capturedWhite.map((p, i) => <span key={i} className="white-piece" style={{ color: "#4a3b2a" }}>{GLYPH.w[p.type]}</span>)}
@@ -2278,6 +2303,9 @@ export default function ChessLedger() {
             <button className="btn" onClick={newGame}>New Game</button>
             <button className="btn" onClick={() => setBoardFlipped((f) => !f)}>
               {boardFlipped ? "🔃 Flip Board (Black bottom)" : "🔃 Flip Board (White bottom)"}
+            </button>
+            <button className={`btn ${is3D ? "active" : ""}`} onClick={() => setIs3D((v) => !v)}>
+              {is3D ? "🧊 3D Board (ON)" : "🧊 2D Board"}
             </button>
             <button className="btn" onClick={openSetup}>Set Up Position…</button>
             <button
