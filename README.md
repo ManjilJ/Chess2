@@ -14,6 +14,7 @@ A vintage, parchment-styled interactive chess scoresheet, analysis board, and pl
 * **🟩 Persistent Last-Move Highlight:** The origin and destination squares of the most recent move stay visibly tinted — not a quick flash that vanishes — so it's always clear which move was just played, even while paused waiting for a reply. Only clears when the *next* move overwrites it.
 * **👻 Departure Ghost:** A fading afterimage of a piece briefly lingers on the square it just left, making rapid or auto-played moves easier to track.
 * **💨 Capture Ghost:** A captured piece doesn't just vanish — it drifts, tilts, and fades away above the square where it was taken, so it's clear what was captured even at a glance.
+* **➡️ Move Arrow (3D):** A brief directional arrow traces each move from its origin to destination square, fading out gradually as the position settles.
 * **🔴 Glowing Check Indicator:** The King's square pulses in bright glowing red whenever placed in check or checkmate.
 * **🤴 Checkmated King:** The losing King's piece visibly topples over (90°) the moment checkmate is delivered.
 * **🔃 Flip Board:** View the board from either side — flips which color sits at the bottom without affecting game state, move history, or any other feature.

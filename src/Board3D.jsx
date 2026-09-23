@@ -139,6 +139,53 @@ function CaptureGhost({ ghost, position }) {
   );
 }
 
+function MoveArrow({ from, to, FILES, RANKS }) {
+  const fromPos = squareToPosition(from, FILES, RANKS);
+  const toPos = squareToPosition(to, FILES, RANKS);
+  const dx = toPos[0] - fromPos[0];
+  const dz = toPos[2] - fromPos[2];
+  const length = Math.sqrt(dx * dx + dz * dz);
+  const angle = Math.atan2(dx, dz);
+  const midX = (fromPos[0] + toPos[0]) / 2;
+  const midZ = (fromPos[2] + toPos[2]) / 2;
+
+  const HEAD_LEN = 0.3;
+  const shaftLength = Math.max(0.05, length - HEAD_LEN);
+  const shaftCenterZ = -HEAD_LEN / 2;
+  const headCenterZ = length / 2 - HEAD_LEN / 2;
+
+  const groupRef = useRef();
+  const startRef = useRef(performance.now());
+  const DURATION = 3500; // same settle timing as DestinationOutline
+
+  useFrame(() => {
+    const t = Math.min(1, (performance.now() - startRef.current) / DURATION);
+    // Fades all the way to 0, unlike the destination outline — the arrow
+    // is a directional cue meant to be transient, not a persistent marker.
+    const opacity = 0.85 * (1 - t);
+    if (groupRef.current) {
+      groupRef.current.traverse((obj) => {
+        if (obj.material) obj.material.opacity = opacity;
+      });
+    }
+  });
+
+  if (length < 0.01) return null; // no visible arrow for a null move
+
+  return (
+    <group ref={groupRef} position={[midX, 0.022, midZ]} rotation={[0, angle, 0]}>
+      <mesh position={[0, 0, shaftCenterZ]}>
+        <boxGeometry args={[0.06, 0.015, shaftLength]} />
+        <meshBasicMaterial color="#7e7666" transparent opacity={.5} />
+      </mesh>
+      <mesh position={[0, 0, headCenterZ]} rotation={[Math.PI / 2, 0, 0]}>
+        <coneGeometry args={[0.12, HEAD_LEN, 8]} />
+        <meshBasicMaterial color="#2b422c" transparent opacity={0.85} />
+      </mesh>
+    </group>
+  );
+}
+
 function DestinationOutline({ position }) {
   const lineRef = useRef();
   const startRef = useRef(performance.now());
@@ -336,6 +383,15 @@ export default function Board3D({
                 position={position}
               />
             )}
+            {flash?.moveArrow && (
+              <MoveArrow
+                key={"arrow-" + flash.id}
+                from={flash.moveArrow.from}
+                to={flash.moveArrow.to}
+                FILES={FILES}
+                RANKS={RANKS}
+              />
+            )}{" "}
             {isTo && (
               <DestinationOutline
                 key={"outline-" + flash.id + sq}

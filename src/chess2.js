@@ -659,8 +659,8 @@ export default function ChessLedger() {
       ? { sq: captureSq, type: ply.captured.type, color: ply.captured.color }
       : null;
 
-    setFlash({ fromSquares, toSquares, pathSquares, ghosts, captureGhost, id: Math.random() });
-    // Intentionally no auto-clear timeout: the from/to highlight is meant to
+    setFlash({ fromSquares, toSquares, pathSquares, ghosts, captureGhost, moveArrow: { from: ply.from, to: ply.to }, id: Math.random() });
+        // Intentionally no auto-clear timeout: the from/to highlight is meant to
     // persist (at reduced, "settled" opacity once its entry animation ends)
     // until the *next* move overwrites it, so it's always visible which
     // square a piece last moved from/to while play is paused.
@@ -1008,11 +1008,12 @@ export default function ChessLedger() {
     }
   }
   function openSetup() {
-    // Seed the editor with the current freeplay board if there is one in
-    // progress, otherwise the standard starting arrangement.
-    const seed = mode === "freeplay" ? { ...board } : initialBoard("");
+    // Seed the editor with the current board if there is one in
+    // progress, no standard starting arrangement with
+    // initialBoard("")
+    const seed = { ...board };
     setSetupSquares(seed);
-    setSetupTurn(mode === "freeplay" ? turn : "w");
+    setSetupTurn(turn);
     setSetupTool({ type: "p", color: "w" });
     setSetupError("");
     setSetupOpen(true);
