@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { useMemo, useRef } from "react";
+import React, { useMemo, useRef, useEffect, Suspense } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
 import { OrbitControls, useGLTF } from "@react-three/drei";
 
@@ -40,7 +40,7 @@ Object.values(MODEL_PATHS).forEach((colorSet) =>
 );
 
 function useIsolatedMaterials(scene) {
-  return useMemo(() => {
+  const materials = useMemo(() => {
     const materials = [];
     scene.traverse((obj) => {
       if (!obj.isMesh) return;
@@ -61,6 +61,14 @@ function useIsolatedMaterials(scene) {
     });
     return materials;
   }, [scene]);
+
+  useEffect(() => {
+    return () => {
+      materials.forEach((m) => m.dispose());
+    };
+  }, [materials]);
+
+  return materials;
 }
 
 function DepartureGhost({ ghost, position }) {
@@ -91,6 +99,7 @@ function DepartureGhost({ ghost, position }) {
   return (
     <primitive
       object={cloned}
+      raycast={() => null}
       position={[position[0], yOffset, position[2]]}
       scale={[scale, scale, scale]}
       rotation={[0, ghost.color === "b" ? Math.PI : 0, 0]}
@@ -156,7 +165,7 @@ function MoveArrow({ from, to, FILES, RANKS }) {
 
   const groupRef = useRef();
   const startRef = useRef(performance.now());
-  const DURATION = 3500; // same settle timing as DestinationOutline
+  const DURATION = 5000; // same settle timing as DestinationOutline
 
   useFrame(() => {
     const t = Math.min(1, (performance.now() - startRef.current) / DURATION);
@@ -173,10 +182,14 @@ function MoveArrow({ from, to, FILES, RANKS }) {
   if (length < 0.01) return null; // no visible arrow for a null move
 
   return (
-    <group ref={groupRef} position={[midX, 0.022, midZ]} rotation={[0, angle, 0]}>
+    <group
+      ref={groupRef}
+      position={[midX, 0.022, midZ]}
+      rotation={[0, angle, 0]}
+    >
       <mesh position={[0, 0, shaftCenterZ]}>
         <boxGeometry args={[0.06, 0.015, shaftLength]} />
-        <meshBasicMaterial color="#7e7666" transparent opacity={.5} />
+        <meshBasicMaterial color="#7e7666" transparent opacity={0.5} />
       </mesh>
       <mesh position={[0, 0, headCenterZ]} rotation={[Math.PI / 2, 0, 0]}>
         <coneGeometry args={[0.12, HEAD_LEN, 8]} />
@@ -268,7 +281,7 @@ const PIECE_GEOMETRY = {
   k: <cylinderGeometry args={[0.24, 0.3, 0.65, 16]} />,
 };
 
-function Piece({ piece, position, tilted }) {
+function Piece({ piece, position, tilted, onClick, onDrop }) {
   const { scene } = useGLTF(MODEL_PATHS[piece.color][piece.type]);
   // Each usage needs its own clone — drei caches and shares the loaded
   // scene, so without cloning every pawn on the board would be the same
@@ -286,6 +299,8 @@ function Piece({ piece, position, tilted }) {
         piece.color === "b" ? Math.PI : 0, // pack's own note: knight faces +Z, flip black's side
         0,
       ]}
+      onClick={onClick}
+      onPointerUp={onDrop}
     />
   );
 }
@@ -338,69 +353,87 @@ export default function Board3D({
         minDistance={4}
         maxDistance={14}
       />
+      <Suspense fallback={null}>
+        {flash?.moveArrow && (
+          <MoveArrow
+            key={"arrow-" + flash.id}
+            from={flash.moveArrow.from}
+            to={flash.moveArrow.to}
+            FILES={FILES}
+            RANKS={RANKS}
+          />
+        )}{" "}
+        {squares.map(({ sq, light }) => {
+          const position = squareToPosition(sq, FILES, RANKS);
+          const piece = board[sq];
+          const ghost = ghostAt(sq, piece);
+          const isTo = flash && flash.toSquares?.includes(sq);
+          const isCheckedKing =
+            piece &&
+            piece.type === "k" &&
+            (gameStatus?.type === "check" ||
+              gameStatus?.type === "checkmate") &&
+            piece.color === gameStatus.checkedColor;
+          const isMatedKing =
+            piece &&
+            piece.type === "k" &&
+            gameStatus?.type === "checkmate" &&
+            piece.color === gameStatus.checkedColor;
 
-      {squares.map(({ sq, light }) => {
-        const position = squareToPosition(sq, FILES, RANKS);
-        const piece = board[sq];
-        const ghost = ghostAt(sq, piece);
-        const isTo = flash && flash.toSquares?.includes(sq);
-        const isCheckedKing =
-          piece &&
-          piece.type === "k" &&
-          (gameStatus?.type === "check" || gameStatus?.type === "checkmate") &&
-          piece.color === gameStatus.checkedColor;
-        const isMatedKing =
-          piece &&
-          piece.type === "k" &&
-          gameStatus?.type === "checkmate" &&
-          piece.color === gameStatus.checkedColor;
+          const handleClick= (e) => {
+            e?.stopPropagation?.();
+            pickSquare(sq);
+          };
 
-        return (
-          <group key={sq}>
-            <Square
-              sq={sq}
-              position={position}
-              light={light}
-              selected={selected === sq}
-              isCheckedKing={isCheckedKing}
-              onClick={() => pickSquare(sq)}
-              onDrop={() => onDrop(sq)}
-            />
-            {piece && (
-              <Piece piece={piece} position={position} tilted={isMatedKing} />
-            )}
-            {ghost && (
-              <DepartureGhost
-                key={"ghost-" + flash.id + sq}
-                ghost={ghost}
+          const handleDrop = (e) => {
+            e?.stopPropagation?.();
+            onDrop(sq);
+          };
+
+          return (
+            <group key={sq}>
+              <Square
+                sq={sq}
                 position={position}
+                light={light}
+                selected={selected === sq}
+                isCheckedKing={isCheckedKing}
+                onClick={handleClick}
+                onDrop={handleDrop}
               />
-            )}
-            {flash?.captureGhost?.sq === sq && (
-              <CaptureGhost
-                key={"capture-" + flash.id}
-                ghost={flash.captureGhost}
-                position={position}
-              />
-            )}
-            {flash?.moveArrow && (
-              <MoveArrow
-                key={"arrow-" + flash.id}
-                from={flash.moveArrow.from}
-                to={flash.moveArrow.to}
-                FILES={FILES}
-                RANKS={RANKS}
-              />
-            )}{" "}
-            {isTo && (
-              <DestinationOutline
-                key={"outline-" + flash.id + sq}
-                position={position}
-              />
-            )}
-          </group>
-        );
-      })}
+              {piece && (
+                <Piece
+                  piece={piece}
+                  position={position}
+                  tilted={isMatedKing}
+                  onClick={handleClick}
+                  onDrop={handleDrop}
+                />
+              )}
+              {ghost && (
+                <DepartureGhost
+                  key={"ghost-" + flash.id + sq}
+                  ghost={ghost}
+                  position={position}
+                />
+              )}
+              {flash?.captureGhost?.sq === sq && (
+                <CaptureGhost
+                  key={"capture-" + flash.id}
+                  ghost={flash.captureGhost}
+                  position={position}
+                />
+              )}
+              {isTo && (
+                <DestinationOutline
+                  key={"outline-" + flash.id + sq}
+                  position={position}
+                />
+              )}
+            </group>
+          );
+        })}
+      </Suspense>
     </Canvas>
   );
 }

@@ -660,7 +660,7 @@ export default function ChessLedger() {
       : null;
 
     setFlash({ fromSquares, toSquares, pathSquares, ghosts, captureGhost, moveArrow: { from: ply.from, to: ply.to }, id: Math.random() });
-        // Intentionally no auto-clear timeout: the from/to highlight is meant to
+    // Intentionally no auto-clear timeout: the from/to highlight is meant to
     // persist (at reduced, "settled" opacity once its entry animation ends)
     // until the *next* move overwrites it, so it's always visible which
     // square a piece last moved from/to while play is paused.
@@ -1391,15 +1391,35 @@ export default function ChessLedger() {
           align-self: flex-start;
           z-index: 5;
         }
+
+
+* --- 2D MODE: Shrinkwrap tightly around the chessboard --- */
+.board-col:not(.mode-3d) {
+  width: fit-content;
+  flex: 0 0 auto; /* Prevent flexbox from stretching this column */
+}
+  .board-col:not(.mode-3d) .board-wrap {
+  width: fit-content; /* Locks container to the exact board size (454px) */
+}
+
+.board-col:not(.mode-3d) .ad-annot-banner {
+  max-width: 454px; /* Keeps the banner the same width as the board */
+  box-sizing: border-box;
+}
+
         .board-col.mode-3d {
-          flex: 1 1 620px;
-          max-width: 62%;
+          flex: 1 1 680px;
+          max-width: 70%;
+  width: auto;
+
         }
+  
         .side-panel { flex: 1; min-width: 340px; }
+
         .side-panel.mode-3d {
-          flex: 1 1 320px;
-          max-width: 38%;
-          min-width: 300px;
+          flex: 1 1 280px;
+          max-width: 30%;
+          min-width: 260px;
         }
 
         .board-wrap {
@@ -1755,7 +1775,7 @@ export default function ChessLedger() {
           border-radius: 3px;
           padding: 8px 14px;
           margin-bottom: 8px;
-          max-width: 416px;
+          max-width: 100%;
           height: 78px;
           overflow-y: auto;
           white-space: pre-wrap;
@@ -1903,15 +1923,7 @@ export default function ChessLedger() {
           margin-top: 6px;
         }
 
-        .scoresheet-head {
-          display: grid;
-          grid-template-columns: 40px 1fr 1fr 1.4fr;
-          background: var(--walnut);
-          color: var(--paper);
-          font-size: 11px;
-          letter-spacing: 0.06em;
-          text-transform: uppercase;
-        }
+        .scoresheet-head { display: grid; grid-template-columns: 40px 9ch 9ch 1fr; background: var(--walnut); color: var(--paper); font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; }
 
         .scoresheet-head div {
           padding: 7px 8px;
@@ -1923,12 +1935,7 @@ export default function ChessLedger() {
           overscroll-behavior: contain;
         }
 
-        .scoresheet-row {
-          display: grid;
-          grid-template-columns: 40px 1fr 1fr 1.4fr;
-          border-top: 1px solid var(--paper-dim);
-          font-size: 13px;
-        }
+        .scoresheet-row { display: grid; grid-template-columns: 40px 9ch 9ch 1fr; border-top: 1px solid var(--paper-dim); font-size: 13px; }
 
         .scoresheet-row div {
           padding: 6px 8px;
@@ -2178,7 +2185,7 @@ export default function ChessLedger() {
       <div className="ledger-layout">
         {/* Board */}
         <div className={`board-col ${is3D ? "mode-3d" : ""}`}>
-          <div className={`side-panel ${is3D ? "mode-3d" : ""}`}></div>
+
           <div className="ad-annot-banner">
             {currentAdAnnot || currentAnnot || (
               <span style={{ opacity: 0.45, fontStyle: "normal" }}>No annotation for this move</span>
