@@ -139,7 +139,7 @@ Toggle **🧊 2D Board / 🧊 3D Board (ON)** to switch the board into an intera
 [@react-three/fiber](https://github.com/pmndrs/react-three-fiber).
 
 * **🖱️ Orbit Camera:** Click-and-drag to rotate around the board, scroll to
-  zoom. Movement is still click-to-move (piece, then destination square) —
+  zoom, right-click & up/down drag to move board up & down. Movement is still click-to-move (piece, then destination square) —
   drag-and-drop isn't supported in 3D mode.
 * **🪵 Real 3D Pieces:** A full Staunton-style set in light and dark wood,
   correctly scaled and oriented per piece type.

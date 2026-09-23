@@ -1,6 +1,6 @@
 import * as THREE from "three";
 import React, { useMemo, useRef, useEffect, Suspense } from "react";
-import { Canvas, useFrame } from "@react-three/fiber";
+import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { OrbitControls, useGLTF } from "@react-three/drei";
 
 const SQUARE_SIZE = 1;
@@ -32,6 +32,13 @@ const MODEL_PATHS = {
 // a king height chosen to look right against SQUARE_SIZE = 1.
 const KING_HEIGHT = 0.85;
 const PIECE_SCALE = { k: 1, q: 0.87, b: 0.7, n: 0.67, r: 0.6, p: 0.53 };
+
+// Right-click-drag vertical lift: how far the whole board+pieces group can
+// be raised/lowered (clamped to 25% of the board span), and how many
+// dragged pixels correspond to one world unit of lift.
+const BOARD_SPAN = 8 * SQUARE_SIZE; // full board width/depth
+const MAX_LIFT = BOARD_SPAN * 0.25; // clamp vertical drag to 25% of board span, up or down
+const LIFT_PIXELS_PER_UNIT = 120;   // drag sensitivity — higher = slower/finer movement
 
 // Preload all 12 up front so the first render of a full board doesn't
 // pop pieces in one by one as each mesh finishes loading.
@@ -244,6 +251,51 @@ function squareToPosition(sq, files, ranks) {
   ];
 }
 
+// Invisible helper: listens for right-click-drag on the canvas and reports
+// the per-frame vertical pixel delta upward via onDelta. Renders nothing —
+// it only owns the pointer/context-menu event wiring on the canvas DOM
+// element, kept separate from any visible mesh.
+function RightDragLift({ onDelta }) {
+  const { gl } = useThree();
+  const draggingRef = useRef(false);
+  const lastYRef = useRef(0);
+
+  useEffect(() => {
+    const dom = gl.domElement;
+
+    function onContextMenu(e) {
+      e.preventDefault(); // suppress the browser's right-click menu, only over the canvas
+    }
+    function onPointerDown(e) {
+      if (e.button !== 2) return; // right mouse button only
+      draggingRef.current = true;
+      lastYRef.current = e.clientY;
+    }
+    function onPointerMove(e) {
+      if (!draggingRef.current) return;
+      const deltaPx = lastYRef.current - e.clientY; // dragging up = positive lift
+      lastYRef.current = e.clientY;
+      onDelta(deltaPx);
+    }
+    function onPointerUp(e) {
+      if (e.button === 2) draggingRef.current = false;
+    }
+
+    dom.addEventListener("contextmenu", onContextMenu);
+    dom.addEventListener("pointerdown", onPointerDown);
+    window.addEventListener("pointermove", onPointerMove);
+    window.addEventListener("pointerup", onPointerUp);
+    return () => {
+      dom.removeEventListener("contextmenu", onContextMenu);
+      dom.removeEventListener("pointerdown", onPointerDown);
+      window.removeEventListener("pointermove", onPointerMove);
+      window.removeEventListener("pointerup", onPointerUp);
+    };
+  }, [gl, onDelta]);
+
+  return null;
+}
+
 function Square({
   sq,
   position,
@@ -333,6 +385,21 @@ export default function Board3D({
     return list;
   }, [FILES, RANKS, fileIdx]);
 
+  // Whole-board vertical lift, driven by right-click-drag (RightDragLift
+  // below). boardGroupRef wraps every square/piece/effect so they all
+  // translate together as one rigid unit; liftRef holds the current lift
+  // value across renders without needing a React state update per pixel.
+  const boardGroupRef = useRef();
+  const liftRef = useRef(0);
+
+  function handleLiftDelta(deltaPx) {
+    liftRef.current = Math.max(
+      -MAX_LIFT,
+      Math.min(MAX_LIFT, liftRef.current + deltaPx / LIFT_PIXELS_PER_UNIT),
+    );
+    if (boardGroupRef.current) boardGroupRef.current.position.y = liftRef.current;
+  }
+
   return (
     <Canvas
       shadows
@@ -353,86 +420,89 @@ export default function Board3D({
         minDistance={4}
         maxDistance={14}
       />
+      <RightDragLift onDelta={handleLiftDelta} />
       <Suspense fallback={null}>
-        {flash?.moveArrow && (
-          <MoveArrow
-            key={"arrow-" + flash.id}
-            from={flash.moveArrow.from}
-            to={flash.moveArrow.to}
-            FILES={FILES}
-            RANKS={RANKS}
-          />
-        )}{" "}
-        {squares.map(({ sq, light }) => {
-          const position = squareToPosition(sq, FILES, RANKS);
-          const piece = board[sq];
-          const ghost = ghostAt(sq, piece);
-          const isTo = flash && flash.toSquares?.includes(sq);
-          const isCheckedKing =
-            piece &&
-            piece.type === "k" &&
-            (gameStatus?.type === "check" ||
-              gameStatus?.type === "checkmate") &&
-            piece.color === gameStatus.checkedColor;
-          const isMatedKing =
-            piece &&
-            piece.type === "k" &&
-            gameStatus?.type === "checkmate" &&
-            piece.color === gameStatus.checkedColor;
+        <group ref={boardGroupRef}>
+          {flash?.moveArrow && (
+            <MoveArrow
+              key={"arrow-" + flash.id}
+              from={flash.moveArrow.from}
+              to={flash.moveArrow.to}
+              FILES={FILES}
+              RANKS={RANKS}
+            />
+          )}{" "}
+          {squares.map(({ sq, light }) => {
+            const position = squareToPosition(sq, FILES, RANKS);
+            const piece = board[sq];
+            const ghost = ghostAt(sq, piece);
+            const isTo = flash && flash.toSquares?.includes(sq);
+            const isCheckedKing =
+              piece &&
+              piece.type === "k" &&
+              (gameStatus?.type === "check" ||
+                gameStatus?.type === "checkmate") &&
+              piece.color === gameStatus.checkedColor;
+            const isMatedKing =
+              piece &&
+              piece.type === "k" &&
+              gameStatus?.type === "checkmate" &&
+              piece.color === gameStatus.checkedColor;
 
-          const handleClick= (e) => {
-            e?.stopPropagation?.();
-            pickSquare(sq);
-          };
+            const handleClick = (e) => {
+              e?.stopPropagation?.();
+              pickSquare(sq);
+            };
 
-          const handleDrop = (e) => {
-            e?.stopPropagation?.();
-            onDrop(sq);
-          };
+            const handleDrop = (e) => {
+              e?.stopPropagation?.();
+              onDrop(sq);
+            };
 
-          return (
-            <group key={sq}>
-              <Square
-                sq={sq}
-                position={position}
-                light={light}
-                selected={selected === sq}
-                isCheckedKing={isCheckedKing}
-                onClick={handleClick}
-                onDrop={handleDrop}
-              />
-              {piece && (
-                <Piece
-                  piece={piece}
+            return (
+              <group key={sq}>
+                <Square
+                  sq={sq}
                   position={position}
-                  tilted={isMatedKing}
+                  light={light}
+                  selected={selected === sq}
+                  isCheckedKing={isCheckedKing}
                   onClick={handleClick}
                   onDrop={handleDrop}
                 />
-              )}
-              {ghost && (
-                <DepartureGhost
-                  key={"ghost-" + flash.id + sq}
-                  ghost={ghost}
-                  position={position}
-                />
-              )}
-              {flash?.captureGhost?.sq === sq && (
-                <CaptureGhost
-                  key={"capture-" + flash.id}
-                  ghost={flash.captureGhost}
-                  position={position}
-                />
-              )}
-              {isTo && (
-                <DestinationOutline
-                  key={"outline-" + flash.id + sq}
-                  position={position}
-                />
-              )}
-            </group>
-          );
-        })}
+                {piece && (
+                  <Piece
+                    piece={piece}
+                    position={position}
+                    tilted={isMatedKing}
+                    onClick={handleClick}
+                    onDrop={handleDrop}
+                  />
+                )}
+                {ghost && (
+                  <DepartureGhost
+                    key={"ghost-" + flash.id + sq}
+                    ghost={ghost}
+                    position={position}
+                  />
+                )}
+                {flash?.captureGhost?.sq === sq && (
+                  <CaptureGhost
+                    key={"capture-" + flash.id}
+                    ghost={flash.captureGhost}
+                    position={position}
+                  />
+                )}
+                {isTo && (
+                  <DestinationOutline
+                    key={"outline-" + flash.id + sq}
+                    position={position}
+                  />
+                )}
+              </group>
+            );
+          })}
+        </group>
       </Suspense>
     </Canvas>
   );
