@@ -426,6 +426,11 @@ export default function ChessLedger() {
   const [vsComputer, setVsComputer] = useState(false);
   const [isThinking, setIsThinking] = useState(false);
   const lastMoveTimeRef = useRef(0);
+  const [autoNext, setAutoNext] = useState(false);
+  const autoNextRef = useRef(false);
+  const libraryRef = useRef(library);
+  const activeGameRef = useRef(activeGame);
+  const libraryDirectionRef = useRef(1); // 1 = forward through Ids, -1 = backward
 
   useEffect(() => { pliesRef.current = plies; }, [plies]);
   useEffect(() => { plyIndexRef.current = plyIndex; }, [plyIndex]);
@@ -433,7 +438,9 @@ export default function ChessLedger() {
   useEffect(() => { blinkRef.current = blink; }, [blink]);
   useEffect(() => { runningRef.current = running; }, [running]);
   useEffect(() => { annotationsRef.current = annotations; }, [annotations]);
-
+  useEffect(() => { autoNextRef.current = autoNext; }, [autoNext]);
+  useEffect(() => { libraryRef.current = library; }, [library]);
+  useEffect(() => { activeGameRef.current = activeGame; }, [activeGame]);
   const activeStrtPos = activeGame ? activeGame.chsGm.StrtPos : customStrtPos;
   const activeStartColor = activeGame ? "w" : customStartColor;
 
@@ -760,16 +767,12 @@ export default function ChessLedger() {
     if (curIndex < curPlies.length) {
       const ply = curPlies[curIndex];
       if (blinkRef.current) flashMove(ply);
-
-      // if (curIndex > 0 && curIndex % 2 === 0 && runningRef.current) {
-      //   const finishedMoveNo = curIndex / 2;
-      //   const finished = annotationsRef.current[finishedMoveNo];
-      //   const text = finished?.adAnnot || finished?.annot || "";
-      // }
-
       setPlyIndex(curIndex + 1);
     } else if (loopRef.current && loopCountRef.current < MAX_LOOPS) {
       loopCountRef.current += 1;
+      if (autoNextRef.current && advanceToNextLibraryGame()) {
+        return; // next/previous library game already loaded at ply 0
+      }
       setPlyIndex(0);
     } else {
       loopCountRef.current = 0;
@@ -1101,6 +1104,45 @@ export default function ChessLedger() {
     });
     setLibraryOpen(false);
     loopCountRef.current = 0;
+    libraryDirectionRef.current = 1;
+  }
+
+  function loadGameForAutoplay(game) {
+    const { plies: loadedPlies, annotations: loadedAnnot } = loadGameMoves(game.moves, game.chsGm.StrtPos);
+    setMode("library");
+    setActiveGame(game);
+    setPlies(loadedPlies);
+    setPlyIndex(0);
+    setSelected(null);
+    setPendingMove(null);
+    setAnnotations(loadedAnnot);
+    setGameMeta({
+      id: game.chsGm.Id,
+      gName: game.chsGm.GName,
+      pauseFor: Math.min(60000, Math.max(1234, Number(game.chsGm.PauseFor) || 2222)),
+      remind: game.chsGm.Remind,
+    });
+    // running/loopCount left alone — playback continues uninterrupted
+  }
+
+  function advanceToNextLibraryGame() {
+    const currentGame = activeGameRef.current;
+    const lib = libraryRef.current;
+    if (!currentGame || !Array.isArray(lib) || lib.length < 2) return false;
+
+    const sorted = [...lib].sort((a, b) => a.chsGm.Id - b.chsGm.Id);
+    const curIdx = sorted.findIndex((g) => g.chsGm.Id === currentGame.chsGm.Id);
+    if (curIdx === -1) return false;
+
+    let dir = libraryDirectionRef.current;
+    let nextIdx = curIdx + dir;
+    if (nextIdx >= sorted.length) { dir = -1; nextIdx = curIdx - 1; }
+    else if (nextIdx < 0) { dir = 1; nextIdx = curIdx + 1; }
+    nextIdx = Math.max(0, Math.min(sorted.length - 1, nextIdx));
+    libraryDirectionRef.current = dir;
+
+    loadGameForAutoplay(sorted[nextIdx]);
+    return true;
   }
 
   function handleRun() {
@@ -2361,6 +2403,10 @@ export default function ChessLedger() {
             <label><input type="checkbox" checked={loop} onChange={(e) => setLoop(e.target.checked)} /> Loop</label>
             <label><input type="checkbox" checked={blink} onChange={(e) => setBlink(e.target.checked)} /> Blink</label>
             <label><input type="checkbox" checked={showCountdown} onChange={(e) => setShowCountdown(e.target.checked)} /> Show countdown</label>
+            <label title="With Loop on: advances eaching the end, then reverses and steps back down, bouncing indefinitely">
+              <input type="checkbox" checked={autoNext} onChange={(e) => setAutoNext(e.target.checked)} disabled={mode !== "library"} />
+              Auto-Next/Prev
+            </label>
             <span>pause: {pauseForActive}ms</span>
           </div>
 

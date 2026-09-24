@@ -38,6 +38,7 @@ A vintage, parchment-styled interactive chess scoresheet, analysis board, and pl
   * **Infinite Loop mode** & **Blink animation**
   * **Adjustable Pause Interval** (1234 ms – 25555 ms)
   * **⏸️ Closure Pause:** When auto-run (or a loop) reaches the final recorded move — checkmate, resignation, or wherever the game record ends — playback holds on that position for a few extra seconds before looping back to move 0 or stopping, rather than snapping through it at the normal per-move pace.
+  * **Auto-Next/Prev** 🔁 — with Loop enabled, automatically advances through the library by Id when a game finishes, then reverses direction at the last Id and steps back down, bouncing indefinitely.
   * **📜 Per-Row Note Auto-Scroll:** During Run, once a move-pair finishes and play advances into the next pair's White move, that finished pair's own typed note (in the scoresheet's *Annot* column) auto-scrolls to reveal any text that overflowed its box — no manual scrolling needed to catch a long note before it's out of view.
   * **⏩ Fastmove:** Step forward *N* moves at once — plays each intermediate move in quick (~250ms) blitz succession rather than teleporting straight to the target, so you still see what happened along the way.
 * **📚 Game Library:** Pre-seeded games with import/export support for custom game collections.
