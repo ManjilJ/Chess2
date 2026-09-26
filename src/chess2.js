@@ -431,7 +431,8 @@ export default function ChessLedger() {
   const libraryRef = useRef(library);
   const activeGameRef = useRef(activeGame);
   const libraryDirectionRef = useRef(1); // 1 = forward through Ids, -1 = backward
-
+  const pauseForRef = useRef(gameMeta.pauseFor);
+  const loadedDefaultPauseForRef = useRef(DEFAULT_PAUSE_MS);
   useEffect(() => { pliesRef.current = plies; }, [plies]);
   useEffect(() => { plyIndexRef.current = plyIndex; }, [plyIndex]);
   useEffect(() => { loopRef.current = loop; }, [loop]);
@@ -471,11 +472,22 @@ export default function ChessLedger() {
     }
   }, [plyIndex, currentMoveNo]);
 
-
+  useEffect(() => { pauseForRef.current = gameMeta.pauseFor; }, [gameMeta.pauseFor]);
 
   const animMapRef = useRef(new Map());
   const activeMoveTaRef = useRef(null); // Slot 1: Current active move
   const hoveredTaRef = useRef(null);    // Slot 2: Currently hovered move
+
+  function handleAutoNextToggle(checked) {
+    if (checked) {
+      const recordedDefault = loadedDefaultPauseForRef.current || DEFAULT_PAUSE_MS;
+      const currentValue = Number(gameMeta.pauseFor) || DEFAULT_PAUSE_MS;
+      pauseFactorRef.current = recordedDefault > 0 ? currentValue / recordedDefault : 1;
+    } else {
+      pauseFactorRef.current = 1; // back to "just whatever it is" once off
+    }
+    setAutoNext(checked);
+  }
 
   function startPingPongScroll(el) {
     if (!el || animMapRef.current.has(el)) return;
@@ -547,6 +559,7 @@ export default function ChessLedger() {
       },
     });
   }
+
 
   function stopPingPongScroll(el) {
     if (!el) return;
@@ -1096,10 +1109,12 @@ export default function ChessLedger() {
     setSelected(null);
     setPendingMove(null);
     setAnnotations(loadedAnnot);
+    const loadedPauseFor = Math.min(60000, Math.max(1234, Number(game.chsGm.PauseFor) || 2222));
+    loadedDefaultPauseForRef.current = loadedPauseFor;
     setGameMeta({
       id: game.chsGm.Id,
       gName: game.chsGm.GName,
-      pauseFor: Math.min(60000, Math.max(1234, Number(game.chsGm.PauseFor) || 2222)),
+      pauseFor: loadedPauseFor,
       remind: game.chsGm.Remind,
     });
     setLibraryOpen(false);
@@ -1107,7 +1122,7 @@ export default function ChessLedger() {
     libraryDirectionRef.current = 1;
   }
 
-  function loadGameForAutoplay(game) {
+  function loadGameForAutoplay(game, factor = 1) {
     const { plies: loadedPlies, annotations: loadedAnnot } = loadGameMoves(game.moves, game.chsGm.StrtPos);
     setMode("library");
     setActiveGame(game);
@@ -1116,15 +1131,17 @@ export default function ChessLedger() {
     setSelected(null);
     setPendingMove(null);
     setAnnotations(loadedAnnot);
+
+    const recordedPauseFor = Number(game.chsGm.PauseFor) || 2222;
+    loadedDefaultPauseForRef.current = Math.min(60000, Math.max(1234, recordedPauseFor));
     setGameMeta({
       id: game.chsGm.Id,
       gName: game.chsGm.GName,
-      pauseFor: Math.min(60000, Math.max(1234, Number(game.chsGm.PauseFor) || 2222)),
+      pauseFor: Math.min(60000, Math.max(1234, Math.round(recordedPauseFor * factor))),
       remind: game.chsGm.Remind,
     });
     // running/loopCount left alone — playback continues uninterrupted
   }
-
   function advanceToNextLibraryGame() {
     const currentGame = activeGameRef.current;
     const lib = libraryRef.current;
@@ -1141,10 +1158,18 @@ export default function ChessLedger() {
     nextIdx = Math.max(0, Math.min(sorted.length - 1, nextIdx));
     libraryDirectionRef.current = dir;
 
-    loadGameForAutoplay(sorted[nextIdx]);
+    // Factor computed fresh at every single transition, from the game
+    // that's just finishing: its own recorded default vs. whatever
+    // PauseFor is actually showing right now — not a value snapshotted
+    // back when Auto-Next was first switched on, which could go stale if
+    // PauseFor gets edited again mid-sequence.
+    const outgoingDefault = loadedDefaultPauseForRef.current || DEFAULT_PAUSE_MS;
+    const outgoingCurrent = pauseForRef.current || DEFAULT_PAUSE_MS;
+    const factor = outgoingDefault > 0 ? outgoingCurrent / outgoingDefault : 1;
+
+    loadGameForAutoplay(sorted[nextIdx], factor);
     return true;
   }
-
   function handleRun() {
     setPlyIndex(0);
     loopCountRef.current = 0;
@@ -1217,6 +1242,9 @@ export default function ChessLedger() {
   }
 
   function fastForward() {
+    // Remember whether Run/auto-play was active, so it resumes on its own
+    // once the blitz catch-up finishes — no manual "Resume" click needed.
+    const wasRunning = runningRef.current;
     setRunning(false);
     // Cancel any fast-forward already in flight rather than stacking two.
     if (fastForwardTimerRef.current) {
@@ -1227,7 +1255,10 @@ export default function ChessLedger() {
     const n = Math.max(1, Number(fastN) || 1);
     const target = Math.min(plies.length, plyIndex + n);
     let stepsLeft = target - plyIndex;
-    if (stepsLeft <= 0) return;
+    if (stepsLeft <= 0) {
+      if (wasRunning) setRunning(true);
+      return;
+    }
 
     setSelected(null);
     fastForwardTimerRef.current = setInterval(() => {
@@ -1236,6 +1267,7 @@ export default function ChessLedger() {
       if (stepsLeft <= 0) {
         clearInterval(fastForwardTimerRef.current);
         fastForwardTimerRef.current = null;
+        if (wasRunning) setRunning(true); // resume automatically
       }
     }, FAST_FORWARD_MS);
   }
